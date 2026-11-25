@@ -1,0 +1,243 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import Icon from '../ui/Icon.astro';
+import { portfolioItems } from '../../data/portfolio';
+
+// Double the items for seamless infinite continuous loop without a visible jump
+const loopedItems = [...portfolioItems, ...portfolioItems];
+---
+
+<section id="realisations" class="w-full py-6 sm:py-8 overflow-hidden" aria-label="Nos réalisations">
+  <div class="max-w-[1360px] mx-auto px-4 sm:px-6">
+    <SectionHeading
+      title="NOS RÉALISATIONS"
+      actionText="Demander un devis →"
+      actionHref="/devis?type=portfolio"
+    />
+
+    <!-- Carousel Container -->
+    <div class="relative group/portfolio" id="portfolio-carousel-wrapper">
+      <!-- Carousel viewport -->
+      <div class="overflow-hidden rounded-2xl">
+        <div
+          id="portfolio-track"
+          class="flex transition-transform duration-600 ease-out will-change-transform"
+          style="transform: translateX(0%);"
+        >
+          {loopedItems.map((item, index) => {
+            const CardTag = item.href ? 'a' : 'div';
+            const cardProps = item.href ? { href: item.href } : {};
+            return (
+              <div
+                class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 px-2 sm:px-2.5 box-border"
+                data-portfolio-slide
+                data-slide-index={index}
+              >
+                <CardTag
+                  {...cardProps}
+                  class="group relative block rounded-2xl overflow-hidden bg-white border border-[#EAE5DC] shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div class="aspect-[4/3] overflow-hidden bg-[#F2EDE4] relative">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      width="400"
+                      height="300"
+                      class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 select-none"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent opacity-85 group-hover:opacity-95 transition-opacity pointer-events-none"></div>
+                    <div class="absolute bottom-0 inset-x-0 p-3.5 sm:p-4 text-white pointer-events-none">
+                      <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#FF7A20] block mb-0.5">
+                        {item.category}
+                      </span>
+                      <h3 class="text-sm sm:text-base font-bold text-white line-clamp-1 leading-snug">
+                        {item.title}
+                      </h3>
+                      {item.description && (
+                        <p class="text-[11px] text-white/80 line-clamp-1 mt-0.5 hidden sm:block">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </CardTag>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <!-- Left Arrow Button -->
+      <button
+        type="button"
+        id="portfolio-prev"
+        aria-label="Réalisation précédente"
+        class="absolute -left-3 sm:-left-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/95 hover:bg-white text-[#111111] shadow-md border border-[#D6D0C8] flex items-center justify-center transition-all z-10 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0066FF]"
+      >
+        <Icon name="ChevronLeft" class="w-5 h-5 text-[#111111]" strokeWidth={2.2} />
+      </button>
+
+      <!-- Right Arrow Button -->
+      <button
+        type="button"
+        id="portfolio-next"
+        aria-label="Réalisation suivante"
+        class="absolute -right-3 sm:-right-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/95 hover:bg-white text-[#111111] shadow-md border border-[#D6D0C8] flex items-center justify-center transition-all z-10 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0066FF]"
+      >
+        <Icon name="ChevronRight" class="w-5 h-5 text-[#111111]" strokeWidth={2.2} />
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  function setupPortfolioCarousel() {
+    const wrapper = document.getElementById('portfolio-carousel-wrapper');
+    const track = document.getElementById('portfolio-track');
+    const prevBtn = document.getElementById('portfolio-prev');
+    const nextBtn = document.getElementById('portfolio-next');
+
+    if (!wrapper || !track || !prevBtn || !nextBtn) return;
+
+    const originalCount = 6; // Half of total 12 looped slides
+    let currentIndex = 0;
+    let isTransitioning = false;
+    let autoplayTimer: ReturnType<typeof setInterval> | null = null;
+    const intervalMs = 4500;
+    const transitionMs = 600;
+
+    function getVisibleCount(): number {
+      const w = window.innerWidth;
+      if (w >= 1024) return 4;
+      if (w >= 640) return 2;
+      return 1;
+    }
+
+    function updateSlide(animate: boolean = true) {
+      const visible = getVisibleCount();
+      const slidePercent = 100 / visible;
+      if (animate) {
+        track!.style.transition = `transform ${transitionMs}ms cubic-bezier(0.25, 1, 0.5, 1)`;
+      } else {
+        track!.style.transition = 'none';
+      }
+      track!.style.transform = `translateX(-${currentIndex * slidePercent}%)`;
+    }
+
+    function nextSlide() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      currentIndex++;
+      updateSlide(true);
+
+      setTimeout(() => {
+        if (currentIndex >= originalCount) {
+          currentIndex = 0;
+          updateSlide(false);
+        }
+        isTransitioning = false;
+      }, transitionMs);
+    }
+
+    function prevSlide() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+
+      if (currentIndex <= 0) {
+        currentIndex = originalCount;
+        updateSlide(false);
+        // Force reflow
+        void track!.offsetWidth;
+      }
+
+      currentIndex--;
+      updateSlide(true);
+
+      setTimeout(() => {
+        isTransitioning = false;
+      }, transitionMs);
+    }
+
+    // Autoplay setup with reduced-motion check
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function startAutoplay() {
+      if (prefersReducedMotion) return;
+      stopAutoplay();
+      autoplayTimer = setInterval(() => {
+        nextSlide();
+      }, intervalMs);
+    }
+
+    function stopAutoplay() {
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+    }
+
+    function resetAutoplay() {
+      stopAutoplay();
+      startAutoplay();
+    }
+
+    // Event listeners for navigation
+    prevBtn.addEventListener('click', () => {
+      prevSlide();
+      resetAutoplay();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      nextSlide();
+      resetAutoplay();
+    });
+
+    // Pause on hover
+    wrapper.addEventListener('mouseenter', stopAutoplay);
+    wrapper.addEventListener('mouseleave', startAutoplay);
+
+    // Pause on focus / keyboard
+    wrapper.addEventListener('focusin', stopAutoplay);
+    wrapper.addEventListener('focusout', startAutoplay);
+
+    // Touch swipe support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    wrapper.addEventListener('touchstart', (e: TouchEvent) => {
+      touchStartX = e.changedTouches[0].screenX;
+      stopAutoplay();
+    }, { passive: true });
+
+    wrapper.addEventListener('touchend', (e: TouchEvent) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 40) {
+        if (diff > 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+      }
+      startAutoplay();
+    }, { passive: true });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      updateSlide(false);
+    });
+
+    // Initialize autoplay
+    startAutoplay();
+  }
+
+  // Support Astro view transitions and regular DOMContentLoaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupPortfolioCarousel);
+  } else {
+    setupPortfolioCarousel();
+  }
+  document.addEventListener('astro:page-load', setupPortfolioCarousel);
+</script>

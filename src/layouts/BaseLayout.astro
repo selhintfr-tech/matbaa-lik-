@@ -1,0 +1,102 @@
+---
+import SiteHeader from '../components/header/SiteHeader.astro';
+import SiteFooter from '../components/footer/SiteFooter.astro';
+import FloatingWhatsApp from '../components/ui/FloatingWhatsApp.astro';
+import '../styles/global.css';
+import { siteConfig } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "MATBAA LIK | Impression professionnelle & création graphique au Maroc",
+  description = "MATBAA LIK — Plateforme d'impression en ligne et studio graphique au Maroc. Factures autocopiantes, cartes de visite, flyers, brochures, packaging et grand format livrés partout au Maroc.",
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://matbaalik.ma");
+
+const schemaOrg = {
+  "@context": "https://schema.org",
+  "@type": "PrintingService",
+  "name": "MATBAA LIK",
+  "alternateName": "MATBAA LIK Maroc",
+  "url": "https://matbaalik.ma",
+  "logo": "https://matbaalik.ma/assets/logo-matbaa-lik.svg",
+  "description": description,
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": siteConfig.city,
+    "addressCountry": "MA"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "33.5731",
+    "longitude": "-7.5898"
+  },
+  "openingHours": "Mo-Fr 08:30-18:30, Sa 09:00-13:00",
+  "priceRange": "$$",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Morocco"
+  }
+};
+---
+
+<!doctype html>
+<html lang="fr" class="scroll-smooth bg-[#E3DDD3]">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <link rel="icon" type="image/svg+xml" href="/assets/logo-matbaa-lik.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/assets/hero-impression-packaging.webp" />
+    <meta property="og:locale" content="fr_MA" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content="/assets/hero-impression-packaging.webp" />
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json" set:html={JSON.stringify(schemaOrg)} />
+  </head>
+  <body class="bg-[#E3DDD3] text-[#111111] antialiased selection:bg-[#0066FF] selection:text-white flex flex-col min-h-screen">
+    <!-- Skip to main content for accessibility -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#0066FF] focus:text-white focus:rounded-lg"
+    >
+      Aller au contenu principal
+    </a>
+
+    <!-- Header (Row 1 + Row 2) -->
+    <SiteHeader />
+
+    <!-- Main Content -->
+    <main id="main-content" class="flex-grow">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <SiteFooter />
+
+    <!-- Fixed Floating WhatsApp Contact Button -->
+    <FloatingWhatsApp />
+  </body>
+</html>

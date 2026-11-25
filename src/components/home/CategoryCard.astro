@@ -1,0 +1,36 @@
+---
+import type { Category } from '../../data/categories';
+
+interface Props {
+  category: Category;
+}
+
+const { category } = Astro.props;
+---
+
+<a
+  href={`/categories/${category.id}/`}
+  id={category.id}
+  class="group relative flex flex-col bg-[#F7F4EF] rounded-xl sm:rounded-card p-3 sm:p-4 border border-[#DCD5C9] shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 overflow-hidden"
+  aria-label={`Découvrir la catégorie ${category.name}`}
+>
+  <!-- Card Title at the top -->
+  <div class="mb-2 sm:mb-2.5">
+    <h3 class="text-xs sm:text-[13px] md:text-sm font-bold text-[#111111] group-hover:text-[#0066FF] transition-colors leading-tight line-clamp-1">
+      {category.name}
+    </h3>
+  </div>
+
+  <!-- Product Image Container (Clean ratio, no stretch) -->
+  <div class="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-[#ECE8E0] flex items-center justify-center">
+    <img
+      src={category.image}
+      alt={category.name}
+      width="400"
+      height="300"
+      class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300 select-none"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+</a>

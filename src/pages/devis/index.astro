@@ -1,0 +1,294 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/ui/Icon.astro';
+import { categories } from '../../data/categories';
+import { siteConfig } from '../../data/site';
+---
+
+<BaseLayout
+  title="Demander un devis sur mesure | MATBAA LIK Maroc"
+  description="Obtenez votre devis personnalisé gratuit sous 2h pour vos projets d'impression et de création graphique partout au Maroc."
+>
+  <div class="max-w-[1000px] mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="w-8 h-[4px] bg-[#F26522] rounded-full mb-3"></div>
+      <h1 class="text-2xl sm:text-3xl md:text-4xl font-black uppercase text-[#111111] tracking-tight">
+        Demande de devis sur mesure
+      </h1>
+      <p class="text-xs sm:text-sm text-[#555555] mt-2 max-w-[650px] leading-relaxed">
+        Remplissez les détails de votre projet. Notre équipe prépare votre chiffrage détaillé et vous contacte directement par WhatsApp ou par téléphone.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Main Form Container -->
+      <div class="lg:col-span-8 bg-white rounded-2xl p-6 sm:p-8 border border-[#DCD6CC] shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+        <form id="devis-form" class="space-y-5">
+          <!-- Catégorie de produit -->
+          <div>
+            <label for="devis-categorie" class="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+              Type de produit <span class="text-[#F26522]">*</span>
+            </label>
+            <select
+              id="devis-categorie"
+              name="categorie"
+              required
+              class="w-full h-11 px-3.5 bg-white text-[#111111] text-xs sm:text-sm rounded-xl border border-[#D6D0C8] focus:border-[#0066FF] focus:outline-none transition-colors"
+            >
+              <option value="">Sélectionnez une catégorie...</option>
+              {categories.map((cat) => (
+                <option value={cat.name}>{cat.name}</option>
+              ))}
+              <option value="Autre support sur mesure">Autre projet d'impression spécifique</option>
+            </select>
+          </div>
+
+          <!-- Nom & Société -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="devis-nom" class="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+                Nom complet <span class="text-[#F26522]">*</span>
+              </label>
+              <input
+                type="text"
+                id="devis-nom"
+                name="nom"
+                required
+                placeholder="Ex. Karim Benjelloun"
+                class="w-full h-11 px-3.5 bg-white text-[#111111] text-xs sm:text-sm rounded-xl border border-[#D6D0C8] focus:border-[#0066FF] focus:outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label for="devis-societe" class="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+                Société / Activité (Optionnel)
+              </label>
+              <input
+                type="text"
+                id="devis-societe"
+                name="societe"
+                placeholder="Ex. SARL Casablanca"
+                class="w-full h-11 px-3.5 bg-white text-[#111111] text-xs sm:text-sm rounded-xl border border-[#D6D0C8] focus:border-[#0066FF] focus:outline-none transition-colors"
+              />
+            </div>
+          </div>
+
+          <!-- Téléphone & Ville -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="devis-tel" class="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+                Téléphone / WhatsApp <span class="text-[#F26522]">*</span>
+              </label>
+              <input
+                type="tel"
+                id="devis-tel"
+                name="telephone"
+                required
+                placeholder="Ex. 06 00 00 00 00"
+                class="w-full h-11 px-3.5 bg-white text-[#111111] text-xs sm:text-sm rounded-xl border border-[#D6D0C8] focus:border-[#0066FF] focus:outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label for="devis-ville" class="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+                Ville de livraison <span class="text-[#F26522]">*</span>
+              </label>
+              <select
+                id="devis-ville"
+                name="ville"
+                required
+                class="w-full h-11 px-3.5 bg-white text-[#111111] text-xs sm:text-sm rounded-xl border border-[#D6D0C8] focus:border-[#0066FF] focus:outline-none transition-colors"
+              >
+                <option value="Casablanca">Casablanca</option>
+                <option value="Rabat">Rabat / Salé</option>
+                <option value="Marrakech">Marrakech</option>
+                <option value="Tanger">Tanger</option>
+                <option value="Fès">Fès</option>
+                <option value="Agadir">Agadir</option>
+                <option value="Meknès">Meknès</option>
+                <option value="Oujda">Oujda</option>
+                <option value="Kénitra">Kénitra</option>
+                <option value="Autre ville au Maroc">Autre ville au Maroc</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Quantité estimée & Fichier -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="devis-qte" class="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+                Quantité estimée
+              </label>
+              <input
+                type="text"
+                id="devis-qte"
+                name="quantite"
+                placeholder="Ex. 500 exemplaires / 5 carnets"
+                class="w-full h-11 px-3.5 bg-white text-[#111111] text-xs sm:text-sm rounded-xl border border-[#D6D0C8] focus:border-[#0066FF] focus:outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label for="devis-fichier" class="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+                Statut du fichier
+              </label>
+              <select
+                id="devis-fichier"
+                name="statutFichier"
+                class="w-full h-11 px-3.5 bg-white text-[#111111] text-xs sm:text-sm rounded-xl border border-[#D6D0C8] focus:border-[#0066FF] focus:outline-none transition-colors"
+              >
+                <option value="J'ai déjà mon fichier prêt">J'ai déjà mon fichier d'impression prêt</option>
+                <option value="Besoin de création graphique">Pas de fichier — Besoin du studio MATBAA LIK</option>
+                <option value="Modification d'un fichier existant">Modification d'un fichier existant</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Description / Précisions -->
+          <div>
+            <label for="devis-message" class="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+              Détails du projet (dimensions, finitions, papier...)
+            </label>
+            <textarea
+              id="devis-message"
+              name="message"
+              rows="3"
+              placeholder="Précisez votre demande : format, grammage papier, pelliculage, délais souhaités..."
+              class="w-full p-3.5 bg-white text-[#111111] text-xs sm:text-sm rounded-xl border border-[#D6D0C8] focus:border-[#0066FF] focus:outline-none transition-colors"
+            ></textarea>
+          </div>
+
+          <!-- Buttons -->
+          <div class="pt-2 flex flex-col sm:flex-row gap-3">
+            <button
+              type="submit"
+              class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm hover:shadow transition-all"
+            >
+              <Icon name="WhatsApp" class="w-4 h-4" />
+              <span>Transmettre par WhatsApp instantané</span>
+            </button>
+
+            <button
+              type="button"
+              id="send-email-btn"
+              class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white hover:bg-[#FAF8F5] text-[#111111] border border-[#111111] text-xs sm:text-sm font-semibold rounded-xl transition-all"
+            >
+              <Icon name="Mail" class="w-4 h-4 text-[#111111]" />
+              <span>Par Email</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right Support Card -->
+      <div class="lg:col-span-4 space-y-4">
+        <div class="bg-white rounded-2xl p-6 border border-[#DCD6CC] shadow-[0_2px_10px_rgba(0,0,0,0.02)] space-y-4">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-[#111111]">
+            Pourquoi MATBAA LIK&nbsp;?
+          </h3>
+          <ul class="space-y-3 text-xs text-[#444444]">
+            <li class="flex items-start gap-2.5">
+              <Icon name="BadgeCheck" class="w-4 h-4 text-[#0066FF] flex-shrink-0 mt-0.5" />
+              <span><strong>Contrôle fichier & BAT gratuit</strong> avant toute mise en machine.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <Icon name="Truck" class="w-4 h-4 text-[#0066FF] flex-shrink-0 mt-0.5" />
+              <span><strong>Livraison rapide</strong> sécurisée partout au Maroc.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <Icon name="FileText" class="w-4 h-4 text-[#0066FF] flex-shrink-0 mt-0.5" />
+              <span><strong>Studio de design intégré</strong> si vous n'avez pas de fichier.</span>
+            </li>
+          </ul>
+
+          <div class="pt-4 border-t border-[#EFEBE4] space-y-2 text-xs">
+            <div class="font-bold text-[#111111]">Contact direct :</div>
+            <div class="text-[#555555]">Tél : {siteConfig.phoneDisplay}</div>
+            <div class="text-[#555555]">Email : {siteConfig.email}</div>
+            <div class="text-[#555555]">Casablanca, Maroc</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script define:vars={{ whatsappPhone: siteConfig.whatsapp, contactEmail: siteConfig.email }}>
+  const form = document.getElementById('devis-form');
+  const emailBtn = document.getElementById('send-email-btn');
+
+  function getFormData() {
+    const data = new FormData(form);
+    return {
+      cat: data.get('categorie') || '',
+      nom: data.get('nom') || '',
+      societe: data.get('societe') || '',
+      tel: data.get('telephone') || '',
+      ville: data.get('ville') || '',
+      qte: data.get('quantite') || '',
+      statut: data.get('statutFichier') || '',
+      msg: data.get('message') || '',
+    };
+  }
+
+  // Pre-fill category & product from URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const paramCat = urlParams.get('categorie');
+  const paramProd = urlParams.get('produit');
+  if (paramCat) {
+    const catSelect = document.getElementById('devis-categorie') as HTMLSelectElement;
+    if (catSelect) {
+      for (let i = 0; i < catSelect.options.length; i++) {
+        if (catSelect.options[i].value === paramCat) {
+          catSelect.selectedIndex = i;
+          break;
+        }
+      }
+    }
+  }
+  if (paramProd) {
+    const detailsInput = document.getElementById('devis-message') as HTMLTextAreaElement;
+    if (detailsInput && !detailsInput.value) {
+      detailsInput.value = `Demande de devis pour : ${paramProd}`;
+    }
+  }
+
+  // Send via WhatsApp
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const d = getFormData();
+    let text = `*DEMANDE DE DEVIS — MATBAA LIK*\n\n`;
+    text += `*Produit:* ${d.cat}\n`;
+    text += `*Client:* ${d.nom} ${d.societe ? '(' + d.societe + ')' : ''}\n`;
+    text += `*Téléphone:* ${d.tel}\n`;
+    text += `*Ville:* ${d.ville}\n`;
+    if (d.qte) text += `*Quantité:* ${d.qte}\n`;
+    text += `*Fichier:* ${d.statut}\n`;
+    if (d.msg) text += `*Détails:* ${d.msg}\n`;
+
+    const waUrl = `https://wa.me/${whatsappPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(text)}`;
+    window.open(waUrl, '_blank');
+  });
+
+  // Send via Email mailto
+  emailBtn?.addEventListener('click', () => {
+    const d = getFormData();
+    if (!d.nom || !d.cat) {
+      alert('Veuillez remplir au moins le type de produit et votre nom.');
+      return;
+    }
+    const subject = encodeURIComponent(`Devis MATBAA LIK : ${d.cat} - ${d.nom}`);
+    const body = encodeURIComponent(
+      `Bonjour MATBAA LIK,\n\nJe souhaite obtenir un devis pour :\n` +
+      `- Catégorie : ${d.cat}\n` +
+      `- Nom : ${d.nom} ${d.societe ? '(' + d.societe + ')' : ''}\n` +
+      `- Téléphone : ${d.tel}\n` +
+      `- Ville : ${d.ville}\n` +
+      `- Quantité : ${d.qte}\n` +
+      `- Fichier : ${d.statut}\n` +
+      `- Message : ${d.msg}\n\nMerci.`
+    );
+    window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+  });
+</script>

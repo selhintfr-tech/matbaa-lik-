@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs & caches
+dist/
+.astro/
+.cache/
+.temp/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs & system files
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python caches & build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+
+# Temporary migration & scraping artifacts
+parsed_catalog_intermediate.json
+placements_dump.json
+prompt_*.txt
+step_*.json

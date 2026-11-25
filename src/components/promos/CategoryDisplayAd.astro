@@ -1,0 +1,157 @@
+---
+// CategoryDisplayAd.astro — Compact Display Ad Placement for Supers Promos
+// Square corners, Google Ads banner block style, 5s rotation, 400ms fade.
+
+export interface PromoAdItem {
+  id: string;
+  title: string;
+  image: string;
+  ctaText: string;
+  subtitle: string;
+  href: string;
+  position: 'left' | 'right';
+}
+
+const ads: PromoAdItem[] = [
+  {
+    id: 'textile-goodies',
+    title: 'À VOTRE IMAGE — Textile & Goodies',
+    image: '/assets/ads/ad-textile-goodies.webp',
+    ctaText: 'DÉCOUVRIR',
+    subtitle: 'Textile & Goodies',
+    href: '/categories/goodies-gadgets/',
+    position: 'left',
+  },
+  {
+    id: 'grand-format',
+    title: 'VOYEZ PLUS GRAND — Grand Format & Signalétique',
+    image: '/assets/ads/ad-grand-format.webp',
+    ctaText: 'DÉCOUVRIR',
+    subtitle: 'Grand Format',
+    href: '/categories/supports-souples/',
+    position: 'left',
+  },
+  {
+    id: 'impression-papeterie',
+    title: 'IMPRIMEZ VOS IDÉES — Impression & Papeterie',
+    image: '/assets/ads/ad-impression-papeterie.webp',
+    ctaText: 'DÉCOUVRIR',
+    subtitle: 'Impression & Papeterie',
+    href: '/categories/flyers-depliants/',
+    position: 'right', // 3rd banner placed on the opposite (right) side per user reference
+  },
+];
+---
+
+<div class="w-full max-w-[760px] mx-auto mt-8 sm:mt-10 mb-6" id="super-promos-ad-wrapper" aria-label="Annonce promotionnelle MATBAA LIK">
+  <!-- Square-cornered Google Ads style ad block (1024x298 aspect ratio, sharp corners) -->
+  <div class="relative w-full aspect-[1024/298] overflow-hidden border border-[#DCD5C9] bg-[#111111] shadow-2xs rounded-none" style="aspect-ratio: 1024 / 298;">
+    {ads.map((ad, idx) => {
+      const isRight = ad.position === 'right';
+      return (
+        <div
+          class={`absolute inset-0 transition-opacity duration-400 ease-in-out ${idx === 0 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'}`}
+          data-ad-slide
+          data-index={idx}
+        >
+          <a href={ad.href} class="block w-full h-full relative group" aria-label={ad.title}>
+            <img
+              src={ad.image}
+              alt={ad.title}
+              class="w-full h-full object-cover select-none rounded-none"
+              loading={idx === 0 ? 'eager' : 'lazy'}
+              width="1024"
+              height="298"
+            />
+            <!-- CTA Container: Banners 1 & 2 on left, Banner 3 on right -->
+            <div
+              class={`absolute bottom-2.5 sm:bottom-3.5 md:bottom-4 hidden sm:flex flex-col ${
+                isRight ? 'right-3 sm:right-5 md:right-6 items-end text-right' : 'left-3 sm:left-5 md:left-6 items-start text-left'
+              }`}
+            >
+              <span class="text-[9px] sm:text-[10px] text-white/80 font-normal tracking-wide uppercase block mb-1 drop-shadow-xs">
+                {ad.subtitle}
+              </span>
+              <span class="inline-flex items-center gap-1 px-3 py-1 sm:px-3.5 sm:py-1.5 bg-[#FF7A20] hover:bg-[#E86100] text-white text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-sm transition-all group-hover:scale-105 active:scale-95 rounded-none">
+                <span>{ad.ctaText}</span>
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                </svg>
+              </span>
+            </div>
+          </a>
+        </div>
+      );
+    })}
+  </div>
+
+  <!-- Mobile CTA button directly below the image for compact mobile displays -->
+  <div class="block sm:hidden mt-2 text-center" id="mobile-ad-cta-container">
+    {ads.map((ad, idx) => (
+      <a
+        href={ad.href}
+        class={`items-center justify-center gap-1.5 px-4 py-2 bg-[#FF7A20] hover:bg-[#E86100] text-white text-xs font-bold uppercase tracking-wider shadow-sm w-full rounded-none ${idx === 0 ? 'inline-flex' : 'hidden'}`}
+        data-mobile-ad-cta
+        data-index={idx}
+      >
+        <span>{ad.ctaText} — {ad.subtitle}</span>
+        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    ))}
+  </div>
+</div>
+
+<script>
+  function setupSuperPromosAd() {
+    const wrapper = document.getElementById('super-promos-ad-wrapper');
+    if (!wrapper) return;
+
+    const slides = wrapper.querySelectorAll<HTMLElement>('[data-ad-slide]');
+    const mobileCtas = wrapper.querySelectorAll<HTMLElement>('[data-mobile-ad-cta]');
+    if (slides.length <= 1) return;
+
+    let currentIndex = 0;
+    const intervalMs = 5000;
+
+    function showSlide(nextIndex: number) {
+      slides.forEach((slide, i) => {
+        if (i === nextIndex) {
+          slide.classList.remove('opacity-0', 'z-0', 'pointer-events-none');
+          slide.classList.add('opacity-100', 'z-10', 'pointer-events-auto');
+        } else {
+          slide.classList.remove('opacity-100', 'z-10', 'pointer-events-auto');
+          slide.classList.add('opacity-0', 'z-0', 'pointer-events-none');
+        }
+      });
+
+      mobileCtas.forEach((cta, i) => {
+        if (i === nextIndex) {
+          cta.classList.remove('hidden');
+          cta.classList.add('inline-flex');
+        } else {
+          cta.classList.remove('inline-flex');
+          cta.classList.add('hidden');
+        }
+      });
+
+      currentIndex = nextIndex;
+    }
+
+    // Auto rotate every 5 seconds
+    const interval = setInterval(() => {
+      const next = (currentIndex + 1) % slides.length;
+      showSlide(next);
+    }, intervalMs);
+
+    window.addEventListener('beforeunload', () => clearInterval(interval), { once: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupSuperPromosAd);
+  } else {
+    setupSuperPromosAd();
+  }
+  document.addEventListener('astro:page-load', setupSuperPromosAd);
+</script>

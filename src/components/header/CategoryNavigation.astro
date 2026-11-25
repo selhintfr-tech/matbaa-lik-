@@ -1,0 +1,263 @@
+---
+import Icon from '../ui/Icon.astro';
+import MegaMenu from './MegaMenu.astro';
+import { CATEGORIES } from '../../data/catalog';
+
+// Define the exact 14 category items with their 2-line labels and icons to match 24hprint
+const CATEGORY_ITEMS = [
+  { id: 'supers-promos', line1: 'Supers', line2: 'promos', icon: 'Tag', isPromo: true },
+  { id: 'cartes-de-visite', line1: 'Cartes', line2: 'de visite', icon: 'Contact' },
+  { id: 'flyers-depliants', line1: 'Flyers', line2: 'Dépliants', icon: 'Files' },
+  { id: 'catalogues-brochures', line1: 'Catalogue', line2: 'Brochures', icon: 'BookOpen' },
+  { id: 'papeterie-bureautique', line1: 'Papeterie', line2: 'Bureautique', icon: 'NotebookPen' },
+  { id: 'boites-packaging', line1: 'Boîtes', line2: 'Packaging', icon: 'Package' },
+  { id: 'etiquettes-adhesifs', line1: 'Étiquettes', line2: 'Adhésifs', icon: 'Sticker' },
+  { id: 'affiches-posters', line1: 'Affiches', line2: 'Posters', icon: 'Image' },
+  { id: 'roll-ups-plv', line1: 'Roll up', line2: '& PLV', icon: 'PanelsTopLeft' },
+  { id: 'supports-souples', line1: 'Support', line2: 'Souple', icon: 'Maximize2' },
+  { id: 'supports-rigides', line1: 'Support', line2: 'Rigide', icon: 'Layers' },
+  { id: 'souvenirs-photos', line1: 'Souvenirs', line2: 'Photos', icon: 'Camera' },
+  { id: 'goodies-gadgets', line1: 'Goodies', line2: 'Gadgets', icon: 'Gift' },
+  { id: 'menus-restaurant', line1: 'Menus', line2: 'Restaurant', icon: 'UtensilsCrossed' },
+];
+
+// Map with catalog data
+const navCategories = CATEGORY_ITEMS.map((item) => {
+  const catData = CATEGORIES.find((c) => c.id === item.id);
+  return {
+    ...item,
+    data: catData || CATEGORIES[0],
+  };
+});
+---
+
+<nav
+  aria-label="Catégories d'impression"
+  id="main-cat-nav"
+  class="relative w-full border-t border-b border-[#D6D0C8] bg-[#E3DDD3] z-40 select-none"
+>
+  <div class="max-w-[1440px] mx-auto px-1 sm:px-2">
+    <!-- Exactly 14 Category Cells in One Compact Horizontal Bar -->
+    <div
+      id="cat-bar-container"
+      class="flex w-full items-stretch divide-x divide-[#D6D0C8] border-l border-r border-[#D6D0C8] overflow-x-auto no-scrollbar scroll-smooth"
+    >
+      {navCategories.map((cat) => (
+        <a
+          href={`/categories/${cat.id}/`}
+          class="cat-nav-cell group relative flex-1 min-w-[76px] lg:min-w-0 flex items-center justify-center gap-1.5 py-1.5 px-1 sm:px-1.5 text-center transition-all duration-150 hover:bg-white/70 focus-visible:outline-none focus-visible:bg-white/80"
+          data-category-id={cat.id}
+          aria-expanded="false"
+          aria-haspopup="true"
+          aria-controls={`mega-menu-${cat.id}`}
+        >
+          <!-- Category Minimalist Icon -->
+          <Icon
+            name={cat.icon}
+            class={`w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 transition-colors ${
+              cat.isPromo ? 'text-[#E6007E] group-hover:text-[#0066FF]' : 'text-[#222222] group-hover:text-[#0066FF]'
+            }`}
+            strokeWidth={1.8}
+          />
+
+          <!-- 2-Line Bold Category Name -->
+          <span
+            class={`block text-[10.5px] lg:text-[11px] xl:text-[12px] font-bold leading-[1.15] text-left transition-colors whitespace-nowrap ${
+              cat.isPromo
+                ? 'text-[#E6007E] group-hover:text-[#0066FF]'
+                : 'text-[#111111] group-hover:text-[#0066FF]'
+            }`}
+          >
+            <span class="block">{cat.line1}</span>
+            <span class="block">{cat.line2}</span>
+          </span>
+
+          <!-- Active bottom indicator line -->
+          <span class="active-indicator absolute bottom-0 left-1 right-1 h-[2.5px] bg-[#0066FF] opacity-0 transition-opacity duration-150 pointer-events-none"></span>
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <!-- Centralized Mega Menu Dropdown (Full Width, Zero Gap, Above Hero, Not Clipped) -->
+  <div
+    id="mega-menu-dropdown"
+    class="absolute left-0 right-0 top-full w-full z-50 pointer-events-none opacity-0 invisible transition-all duration-150 transform -translate-y-1"
+  >
+    <!-- Bridge container with padding to ensure zero mouse gap -->
+    <div class="max-w-[1440px] mx-auto px-1 sm:px-2 pointer-events-auto">
+      <div class="relative bg-white rounded-b-2xl shadow-[0_25px_60px_rgba(0,0,0,0.18)] border border-[#DCD5C9] border-t-0 p-5 sm:p-6 overflow-hidden">
+        {navCategories.map((cat) => (
+          <div
+            id={`mega-menu-${cat.id}`}
+            class="mega-menu-panel hidden"
+            data-panel-id={cat.id}
+          >
+            <MegaMenu category={cat.data} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* Hide scrollbar for category bar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
+
+<script>
+  function setupCategoryNavigation() {
+    const navRoot = document.getElementById('main-cat-nav');
+    const dropdown = document.getElementById('mega-menu-dropdown');
+    if (!navRoot || !dropdown) return;
+
+    const cells = navRoot.querySelectorAll<HTMLAnchorElement>('.cat-nav-cell');
+    const panels = dropdown.querySelectorAll<HTMLDivElement>('.mega-menu-panel');
+
+    let closeTimer: number | undefined;
+    let activeCatId: string | null = null;
+
+    function openCategoryMenu(catId: string) {
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = undefined;
+      }
+
+      activeCatId = catId;
+
+      // Update cells active state
+      cells.forEach((cell) => {
+        const isCurrent = cell.dataset.categoryId === catId;
+        cell.setAttribute('aria-expanded', isCurrent ? 'true' : 'false');
+        const indicator = cell.querySelector('.active-indicator');
+        if (isCurrent) {
+          cell.classList.add('bg-white', 'text-[#0066FF]');
+          indicator?.classList.remove('opacity-0');
+          indicator?.classList.add('opacity-100');
+        } else {
+          cell.classList.remove('bg-white', 'text-[#0066FF]');
+          indicator?.classList.remove('opacity-100');
+          indicator?.classList.add('opacity-0');
+        }
+      });
+
+      // Show the matching panel
+      panels.forEach((panel) => {
+        if (panel.dataset.panelId === catId) {
+          panel.classList.remove('hidden');
+        } else {
+          panel.classList.add('hidden');
+        }
+      });
+
+      // Reveal dropdown container
+      dropdown.classList.remove('opacity-0', 'invisible', '-translate-y-1', 'pointer-events-none');
+      dropdown.classList.add('opacity-100', 'visible', 'translate-y-0', 'pointer-events-auto');
+    }
+
+    function scheduleCloseMenu() {
+      if (closeTimer) clearTimeout(closeTimer);
+      closeTimer = window.setTimeout(() => {
+        closeMenu();
+      }, 160);
+    }
+
+    function closeMenu() {
+      activeCatId = null;
+
+      // Clear cell highlights
+      cells.forEach((cell) => {
+        cell.setAttribute('aria-expanded', 'false');
+        cell.classList.remove('bg-white', 'text-[#0066FF]');
+        const indicator = cell.querySelector('.active-indicator');
+        indicator?.classList.remove('opacity-100');
+        indicator?.classList.add('opacity-0');
+      });
+
+      // Hide dropdown container
+      dropdown.classList.remove('opacity-100', 'visible', 'translate-y-0', 'pointer-events-auto');
+      dropdown.classList.add('opacity-0', 'invisible', '-translate-y-1', 'pointer-events-none');
+
+      // Hide all panels after transition
+      setTimeout(() => {
+        if (!activeCatId) {
+          panels.forEach((p) => p.classList.add('hidden'));
+        }
+      }, 150);
+    }
+
+    // Attach listeners to navigation cells
+    cells.forEach((cell) => {
+      const catId = cell.dataset.categoryId;
+      if (!catId) return;
+
+      // Desktop Hover
+      cell.addEventListener('mouseenter', () => {
+        openCategoryMenu(catId);
+      });
+
+      // Keyboard Focus
+      cell.addEventListener('focus', () => {
+        openCategoryMenu(catId);
+      });
+
+      // Keyboard navigation
+      cell.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'Enter') {
+          openCategoryMenu(catId);
+          const activePanel = dropdown.querySelector(`[data-panel-id="${catId}"]`);
+          const firstLink = activePanel?.querySelector<HTMLAnchorElement>('a');
+          if (firstLink) {
+            e.preventDefault();
+            firstLink.focus();
+          }
+        } else if (e.key === 'Escape') {
+          closeMenu();
+        }
+      });
+    });
+
+    // Mouse entering the dropdown keeps it open
+    dropdown.addEventListener('mouseenter', () => {
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = undefined;
+      }
+    });
+
+    // Mouse leaving the whole nav area triggers graceful close
+    navRoot.addEventListener('mouseleave', () => {
+      scheduleCloseMenu();
+    });
+
+    // Mouse leaving dropdown
+    dropdown.addEventListener('mouseleave', () => {
+      scheduleCloseMenu();
+    });
+
+    // Global click outside closes
+    document.addEventListener('click', (e) => {
+      if (!navRoot.contains(e.target as Node)) {
+        closeMenu();
+      }
+    });
+
+    // Global Escape key closes
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeMenu();
+      }
+    });
+  }
+
+  // Initialize on load and on page transitions
+  setupCategoryNavigation();
+  document.addEventListener('astro:page-load', setupCategoryNavigation);
+</script>

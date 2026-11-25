@@ -1,0 +1,40 @@
+---
+import Icon from '../ui/Icon.astro';
+---
+
+<section class="w-full py-6 sm:py-8" aria-label="Passer commande">
+  <div class="max-w-[1360px] mx-auto px-4 sm:px-6">
+    <div class="relative bg-[#111111] text-white rounded-xl sm:rounded-card p-6 sm:p-8 md:p-10 overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-[0_8px_30px_rgba(0,0,0,0.18)]">
+      <!-- Left Content with CMYK accent on the far left -->
+      <div class="flex items-center gap-5 sm:gap-6 z-10">
+        <!-- CMYK Color Accent Bar (Cyan, Magenta, Yellow, Key/Black) -->
+        <div class="flex items-center gap-1 sm:gap-1.5 flex-shrink-0" aria-hidden="true">
+          <div class="w-2.5 sm:w-3 h-8 sm:h-9 bg-[#00AEEF] transform -skew-x-12 rounded-sm"></div>
+          <div class="w-2.5 sm:w-3 h-8 sm:h-9 bg-[#EC008C] transform -skew-x-12 rounded-sm"></div>
+          <div class="w-2.5 sm:w-3 h-8 sm:h-9 bg-[#FFF200] transform -skew-x-12 rounded-sm"></div>
+          <div class="w-2.5 sm:w-3 h-8 sm:h-9 bg-[#231F20] border border-white/20 transform -skew-x-12 rounded-sm"></div>
+        </div>
+
+        <div>
+          <h2 class="text-xl sm:text-2xl md:text-[25px] font-black text-white tracking-tight mb-1.5">
+            Prêt à lancer votre impression ?
+          </h2>
+          <p class="text-xs sm:text-sm text-[#BBBBBB] leading-relaxed max-w-[580px]">
+            Confiez-nous votre projet d'impression et profitez de notre savoir-faire graphique.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right CTA Button -->
+      <div class="flex-shrink-0 z-10">
+        <a
+          href="/devis"
+          class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold rounded-[10px] shadow-md hover:shadow-lg transition-all active:scale-[0.98] w-full sm:w-auto text-center"
+        >
+          <span>Demander un devis</span>
+          <Icon name="ArrowRight" class="w-4 h-4" />
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

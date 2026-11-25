@@ -1,0 +1,361 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/ui/Icon.astro';
+import PricingCalculator from '../../components/product/PricingCalculator.astro';
+import { CANONICAL_PRODUCTS, getProductBySlug, getCategoryBySlug } from '../../data/catalog';
+import { getPricingBySlug } from '../../data/pricing';
+
+export async function getStaticPaths() {
+  return CANONICAL_PRODUCTS.map((prod) => ({
+    params: { slug: prod.slug },
+    props: { product: prod },
+  }));
+}
+
+const { product } = Astro.props;
+const category = getCategoryBySlug(product.categoryId);
+const pricing = getPricingBySlug(product.slug);
+
+// Resolve sharp, product-specific gallery images (Requirement 6: no duplicates, no fakes)
+function getProductImages(prod: any): string[] {
+  const list: string[] = [];
+  
+  if (prod.categoryId === 'cartes-de-visite') {
+    list.push('/assets/mega-menu/cartes-de-visite-promo.jpg');
+    list.push('/assets/hero-main-hd.png');
+    list.push('/assets/realisation-luxe.webp');
+  } else if (prod.categoryId === 'flyers-depliants') {
+    list.push('/assets/mega-menu/flyers-depliants-promo.jpg');
+    list.push('/assets/hero-slide-2-hd.png');
+    list.push('/assets/categorie-flyers.webp');
+  } else if (prod.categoryId === 'catalogues-brochures') {
+    list.push('/assets/mega-menu/catalogues-brochures-promo.webp');
+    list.push('/assets/hero-main-hd.png');
+  } else if (prod.categoryId === 'papeterie-bureautique') {
+    list.push('/assets/mega-menu/papeterie-bureautique-promo.webp');
+    list.push('/assets/realisation-carnet.webp');
+    list.push('/assets/categorie-carnets.webp');
+  } else if (prod.categoryId === 'etiquettes-adhesifs') {
+    list.push('/assets/mega-menu/etiquettes-adhesifs-promo.webp');
+    list.push('/assets/hero-main-hd.png');
+  } else if (prod.categoryId === 'affiches-posters') {
+    list.push('/assets/mega-menu/affiches-posters-promo.webp');
+    list.push('/assets/hero-main-hd.png');
+  } else if (prod.categoryId === 'roll-ups-plv') {
+    list.push('/assets/mega-menu/roll-ups-plv-promo.webp');
+    list.push('/assets/hero-main-hd.png');
+    list.push('/assets/hero-grand-format.webp');
+  } else if (prod.categoryId === 'supports-rigides') {
+    list.push('/assets/mega-menu/supports-rigides-promo.webp');
+    list.push('/assets/hero-main-hd.png');
+  } else if (prod.categoryId === 'boites-packaging') {
+    list.push('/assets/mega-menu/boites-packaging-promo.webp');
+    list.push('/assets/hero-main-hd.png');
+  } else if (prod.categoryId === 'menus-restaurant') {
+    list.push('/assets/mega-menu/menus-restaurant-promo.webp');
+    list.push('/assets/hero-main-hd.png');
+  } else if (prod.categoryId === 'supports-souples') {
+    list.push('/assets/mega-menu/supports-souples-promo.webp');
+    list.push('/assets/realisation-bache.webp');
+    list.push('/assets/hero-grand-format.webp');
+  } else if (prod.categoryId === 'souvenirs-photos') {
+    list.push('/assets/mega-menu/souvenirs-photos-promo.webp');
+    list.push('/assets/hero-main-hd.png');
+  } else if (prod.categoryId === 'goodies-gadgets') {
+    list.push('/assets/mega-menu/goodies-gadgets-promo.webp');
+    list.push('/assets/hero-main-hd.png');
+  } else {
+    if (prod.image) list.push(prod.image);
+  }
+
+  // Deduplicate and ensure at most 4 sharp images
+  const unique = Array.from(new Set(list));
+  return unique.length > 0 ? unique : [prod.image || '/assets/hero-main-hd.png'];
+}
+
+const galleryImages = getProductImages(product);
+const mainImage = galleryImages[0];
+
+const defaultPrice = pricing && pricing.hasVerifiedPrices && pricing.tiers.length > 0
+  ? pricing.tiers[0].priceHT.toFixed(2)
+  : "0.00";
+
+const schemaProduct = {
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": product.title,
+  "image": `https://matbaalik.ma${mainImage}`,
+  "description": product.shortDesc,
+  "brand": {
+    "@type": "Brand",
+    "name": "MATBAA LIK"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": `https://matbaalik.ma/produits/${product.slug}/`,
+    "priceCurrency": "MAD",
+    "price": defaultPrice,
+    "priceValidUntil": "2027-12-31",
+    "availability": "https://schema.org/InStock",
+    "itemCondition": "https://schema.org/NewCondition",
+    "seller": {
+      "@type": "Organization",
+      "name": "MATBAA LIK"
+    }
+  }
+};
+---
+
+<BaseLayout
+  title={`${product.title} | MATBAA LIK Maroc`}
+  description={product.seoDescription}
+>
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify(schemaProduct)} />
+
+  <!-- Clean White Product Page Canvas (Matching Image 1 AL PRINT exactly) -->
+  <div class="bg-white min-h-screen text-left">
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
+      
+      <!-- TOP: Small Clean Breadcrumb Navigation -->
+      <nav aria-label="Fil d'Ariane" class="mb-5 sm:mb-7 text-xs text-[#888888] flex items-center gap-2 flex-wrap">
+        <a href="/" class="hover:text-[#0066FF] transition-colors uppercase font-semibold">Accueil</a>
+        <span class="text-[#CCCCCC]">/</span>
+        {category && (
+          <>
+            <a href={`/categories/${category.id}/`} class="hover:text-[#0066FF] transition-colors uppercase font-semibold">
+              {category.name}
+            </a>
+            <span class="text-[#CCCCCC]">/</span>
+          </>
+        )}
+        <span class="text-[#111111] font-bold uppercase">{product.title}</span>
+      </nav>
+
+      <!-- MAIN PRODUCT AREA — TWO COLUMNS (Matching Image 1 AL PRINT) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-start mb-14 sm:mb-16">
+        
+        <!-- LEFT COLUMN: Large Main Image + Clickable Thumbnails + 3 Service Icons -->
+        <div class="lg:col-span-6">
+          <!-- 1. Large Main Product Image -->
+          <div class="relative w-full aspect-[4/3] sm:aspect-square rounded-xl overflow-hidden bg-[#FBF9F6] border border-[#E8E2D8] flex items-center justify-center p-3 sm:p-5 shadow-xs">
+            <img
+              id="main-product-img"
+              src={mainImage}
+              alt={product.title}
+              class="w-full h-full object-contain select-none transition-opacity duration-200"
+              loading="eager"
+            />
+          </div>
+
+          <!-- 2. Horizontal Row of 3-4 Clickable Thumbnails (Only if multiple distinct images exist) -->
+          {galleryImages.length > 1 && (
+            <div class="flex items-center gap-3 mt-4" id="gallery-thumbs">
+              {galleryImages.map((img, idx) => (
+                <button
+                  type="button"
+                  class={`gallery-thumb w-20 h-20 sm:w-22 sm:h-22 rounded-lg border-2 p-1 overflow-hidden transition-all bg-[#FBF9F6] cursor-pointer ${
+                    idx === 0 ? 'border-[#0066FF] ring-2 ring-[#0066FF]/20' : 'border-[#E5E0D8] hover:border-[#0066FF]/50'
+                  }`}
+                  data-img-src={img}
+                  aria-label={`Afficher la vue ${idx + 1}`}
+                >
+                  <img
+                    src={img}
+                    alt={`${product.title} - vue ${idx + 1}`}
+                    class="w-full h-full object-contain select-none"
+                    loading="lazy"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+
+          <!-- 3. Three Minimalist Service Badges Underneath -->
+          <div class="grid grid-cols-3 gap-2 pt-6 mt-6 border-t border-[#EAE5DC] text-center">
+            <!-- Badge 1: Livraison Rapide -->
+            <div class="space-y-1">
+              <Icon name="Truck" class="w-5 h-5 mx-auto text-[#0066FF]" />
+              <h4 class="text-[11px] font-bold text-[#111111] uppercase tracking-wider">
+                LIVRAISON RAPIDE
+              </h4>
+              <p class="text-[10px] text-[#777777]">
+                Partout au Maroc
+              </p>
+            </div>
+
+            <!-- Badge 2: Contrôle PAO -->
+            <div class="space-y-1">
+              <Icon name="BadgeCheck" class="w-5 h-5 mx-auto text-[#0066FF]" />
+              <h4 class="text-[11px] font-bold text-[#111111] uppercase tracking-wider">
+                CONTRÔLE PAO
+              </h4>
+              <p class="text-[10px] text-[#777777]">
+                Fichier vérifié gratuit
+              </p>
+            </div>
+
+            <!-- Badge 3: Tirage Express -->
+            <div class="space-y-1">
+              <Icon name="Clock" class="w-5 h-5 mx-auto text-[#0066FF]" />
+              <h4 class="text-[11px] font-bold text-[#111111] uppercase tracking-wider">
+                TIRAGE EXPRESS
+              </h4>
+              <p class="text-[10px] text-[#777777]">
+                24h à 48h disponible
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Category Label + Bold Product Title + Compact Pricing Calculator -->
+        <div class="lg:col-span-6 space-y-3">
+          <!-- Small Category Tag -->
+          <div class="inline-block text-[11px] font-extrabold uppercase tracking-widest text-[#0066FF]">
+            {product.categoryName}
+          </div>
+
+          <!-- Large Bold Product Title -->
+          <h1 class="text-2xl sm:text-3xl xl:text-4xl font-black text-[#111111] uppercase tracking-tight leading-tight">
+            {product.title}
+          </h1>
+
+          <!-- Compact Pricing Calculator Card -->
+          <div class="pt-2">
+            <PricingCalculator product={product} pricing={pricing} />
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 1: Product Description -->
+      <section class="mt-12 sm:mt-16 pt-8 border-t border-[#EAE5DC]">
+        <h2 class="text-base sm:text-lg font-black text-[#111111] uppercase tracking-wider pb-2 border-b-2 border-[#111111] inline-block mb-5">
+          DESCRIPTION DU PRODUIT
+        </h2>
+        <div class="prose prose-sm max-w-none text-[#444444] leading-relaxed space-y-3">
+          <p>{product.description}</p>
+          <p>
+            Chaque commande passée chez <strong>MATBAA LIK</strong> bénéficie d'une vérification technique gratuite de vos fichiers (bords perdus de 2 mm, colorimétrie CMJN, résolution minimale 300 DPI) avant toute mise sous presse, vous garantissant un rendu d'impression impeccable et conforme à vos attentes.
+          </p>
+        </div>
+      </section>
+
+      <!-- BELOW THE MAIN PRODUCT AREA: Section 2 — SPÉCIFICATIONS TECHNIQUES -->
+      <section class="mt-12 sm:mt-16 pt-8 border-t border-[#EAE5DC] mb-14 sm:mb-20">
+        <h2 class="text-base sm:text-lg font-black text-[#111111] uppercase tracking-wider pb-2 border-b-2 border-[#111111] inline-block mb-6">
+          SPÉCIFICATIONS TECHNIQUES
+        </h2>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 text-left">
+          <!-- 1. Quantités -->
+          {product.quantities.length > 0 && (
+            <div>
+              <span class="block text-[11px] font-bold text-[#888888] uppercase tracking-wider mb-2.5">
+                QUANTITÉ
+              </span>
+              <div class="flex flex-wrap gap-1.5">
+                {product.quantities.map((q) => (
+                  <span class="text-xs px-2.5 py-1.5 rounded-md bg-[#F4F1EA] text-[#111111] font-semibold border border-[#E5E0D8]">
+                    {q}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- 2. Supports & Papiers -->
+          {product.papers.length > 0 && (
+            <div>
+              <span class="block text-[11px] font-bold text-[#888888] uppercase tracking-wider mb-2.5">
+                SUPPORT & PAPIER
+              </span>
+              <div class="flex flex-wrap gap-1.5">
+                {product.papers.map((p) => (
+                  <span class="text-xs px-2.5 py-1.5 rounded-md bg-[#F4F1EA] text-[#222222] font-medium border border-[#E5E0D8]">
+                    {p}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- 3. Finitions -->
+          {product.finishes.length > 0 && (
+            <div>
+              <span class="block text-[11px] font-bold text-[#888888] uppercase tracking-wider mb-2.5">
+                FINITIONS
+              </span>
+              <div class="flex flex-wrap gap-1.5">
+                {product.finishes.map((fn) => (
+                  <span class="text-xs px-2.5 py-1.5 rounded-md bg-[#F4F1EA] text-[#222222] font-medium border border-[#E5E0D8]">
+                    {fn}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- 4. Formats -->
+          {product.formats.length > 0 && (
+            <div>
+              <span class="block text-[11px] font-bold text-[#888888] uppercase tracking-wider mb-2.5">
+                FORMATS
+              </span>
+              <div class="flex flex-wrap gap-1.5">
+                {product.formats.map((f) => (
+                  <span class="text-xs px-2.5 py-1.5 rounded-md bg-[#F4F1EA] text-[#222222] font-medium border border-[#E5E0D8]">
+                    {f}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- 5. Délais de production -->
+          <div>
+            <span class="block text-[11px] font-bold text-[#888888] uppercase tracking-wider mb-2.5">
+              DÉLAIS ESTIMÉS
+            </span>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="text-xs px-2.5 py-1.5 rounded-md bg-[#F4F1EA] text-[#0066FF] font-bold border border-[#E5E0D8]">
+                {product.turnaround}
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  function initProductGallery() {
+    const mainImg = document.getElementById('main-product-img') as HTMLImageElement | null;
+    const thumbs = document.querySelectorAll<HTMLElement>('.gallery-thumb');
+    if (!mainImg || thumbs.length === 0) return;
+
+    thumbs.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const newSrc = btn.getAttribute('data-img-src');
+        if (newSrc && mainImg.src !== newSrc) {
+          mainImg.style.opacity = '0';
+          setTimeout(() => {
+            mainImg.src = newSrc;
+            mainImg.style.opacity = '1';
+          }, 150);
+
+          thumbs.forEach((t) => {
+            t.classList.remove('border-[#0066FF]', 'ring-2', 'ring-[#0066FF]/20');
+            t.classList.add('border-[#E5E0D8]');
+          });
+          btn.classList.remove('border-[#E5E0D8]');
+          btn.classList.add('border-[#0066FF]', 'ring-2', 'ring-[#0066FF]/20');
+        }
+      });
+    });
+  }
+
+  initProductGallery();
+  document.addEventListener('astro:page-load', initProductGallery);
+</script>

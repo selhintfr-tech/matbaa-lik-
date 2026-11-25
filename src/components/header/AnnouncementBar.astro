@@ -1,0 +1,30 @@
+---
+const announcementText = "Impression professionnelle  •  Création graphique  •  Livraison partout au Maroc  •  Vérification de vos fichiers";
+---
+
+<div
+  class="marquee-wrapper w-full bg-[#111111] text-white py-2 overflow-hidden select-none text-[11px] sm:text-xs font-medium tracking-wide flex items-center border-b border-white/5 cursor-default"
+  role="region"
+  aria-label="Annonce du site"
+>
+  <div class="animate-marquee flex items-center shrink-0">
+    <!-- Group 1 -->
+    <div class="flex items-center gap-8 px-4 shrink-0 whitespace-nowrap">
+      <span>{announcementText}</span>
+      <span class="text-[#F26522]">•</span>
+      <span>{announcementText}</span>
+      <span class="text-[#0066FF]">•</span>
+      <span>{announcementText}</span>
+      <span class="text-[#F26522]">•</span>
+    </div>
+    <!-- Group 2 (Exact duplicate for smooth infinite loop) -->
+    <div class="flex items-center gap-8 px-4 shrink-0 whitespace-nowrap" aria-hidden="true">
+      <span>{announcementText}</span>
+      <span class="text-[#F26522]">•</span>
+      <span>{announcementText}</span>
+      <span class="text-[#0066FF]">•</span>
+      <span>{announcementText}</span>
+      <span class="text-[#F26522]">•</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import ProductCard from '../product/ProductCard.astro';
+import { FEATURED_OFFERS } from '../../data/featuredProducts';
+import { getProductBySlug, type Product } from '../../data/catalog';
+
+// Map the 8 featured offers from the centralized collection
+const featuredList = FEATURED_OFFERS.map((item) => ({
+  product: getProductBySlug(item.slug),
+  badge: item.badge,
+})).filter((item): item is { product: Product; badge?: string } => Boolean(item.product));
+---
+
+<section id="offres-du-moment" class="w-full py-6 sm:py-8" aria-label="Offres du moment">
+  <div class="max-w-[1360px] mx-auto px-4 sm:px-6">
+    <SectionHeading
+      title="OFFRES DU MOMENT"
+      actionText="Voir tout le catalogue →"
+      actionHref="/categories/supers-promos/"
+    />
+
+    <!-- Desktop: 4 cards/row (2 rows = 8 products) | Tablet: 2-3 cols | Mobile: 2 cols -->
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+      {featuredList.map(({ product, badge }) => (
+        <ProductCard product={product} badge={badge} />
+      ))}
+    </div>
+  </div>
+</section>

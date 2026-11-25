@@ -1,0 +1,80 @@
+---
+import { getPricingBySlug, formatPriceMAD } from '../../data/pricing';
+import Icon from '../ui/Icon.astro';
+import type { Product } from '../../data/catalog';
+
+interface Props {
+  product: Product;
+  badge?: string;
+  class?: string;
+}
+
+const { product, badge, class: className = '' } = Astro.props;
+
+const pricing = getPricingBySlug(product.slug);
+const hasPricing = pricing && pricing.hasVerifiedPrices && pricing.tiers && pricing.tiers.length > 0;
+const minPrice = hasPricing ? Math.min(...pricing.tiers.map((t) => t.priceHT)) : null;
+const priceDisplay = minPrice !== null ? formatPriceMAD(minPrice).ht : 'Prix sur devis';
+---
+
+<a
+  href={`/produits/${product.slug}/`}
+  class={`group flex flex-col bg-white rounded-2xl p-3 sm:p-4 border border-[#EAE5DC] shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all duration-200 overflow-hidden relative ${className}`}
+>
+  <!-- Image Container -->
+  <div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#F4EFE6] mb-3">
+    <img
+      src={product.image || '/assets/placeholder-product.svg'}
+      alt={product.title}
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      loading="lazy"
+      decoding="async"
+    />
+    {badge && (
+      <span class="absolute top-2.5 left-2.5 bg-[#FF7A20] text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-2xs uppercase tracking-wider">
+        {badge}
+      </span>
+    )}
+    <span class="absolute top-2.5 right-2.5 bg-black/60 backdrop-blur-xs text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+      {hasPricing ? 'Tarif direct' : 'Sur devis'}
+    </span>
+  </div>
+
+  <!-- Content -->
+  <div class="flex-1 flex flex-col justify-between">
+    <div>
+      <span class="text-[10px] sm:text-[11px] font-semibold text-[#0066FF] block mb-1 uppercase tracking-wider">
+        {product.categoryName}
+      </span>
+      <h3 class="text-sm sm:text-[15px] font-bold text-[#111111] group-hover:text-[#0066FF] transition-colors line-clamp-2 mb-1 leading-snug">
+        {product.title}
+      </h3>
+      <p class="text-xs text-[#666666] line-clamp-2 mb-3 leading-relaxed">
+        {product.shortDesc}
+      </p>
+    </div>
+
+    <!-- Price & CTA footer -->
+    <div class="pt-2.5 border-t border-[#EAE5DC] flex items-center justify-between gap-2 mt-auto">
+      <div>
+        {hasPricing ? (
+          <div>
+            <span class="text-[10px] text-[#888888] block leading-none mb-0.5">À partir de</span>
+            <span class="text-xs sm:text-sm font-black text-[#111111]">
+              {priceDisplay}
+            </span>
+          </div>
+        ) : (
+          <span class="text-xs font-semibold text-[#666666] bg-[#F4EFE6] px-2 py-0.5 rounded-md inline-block">
+            Prix sur devis
+          </span>
+        )}
+      </div>
+
+      <span class="inline-flex items-center gap-1 text-xs font-bold text-[#0066FF] group-hover:text-[#0052cc] group-hover:translate-x-0.5 transition-all flex-shrink-0">
+        <span>Configurer</span>
+        <Icon name="ArrowRight" class="w-3 h-3" />
+      </span>
+    </div>
+  </div>
+</a>

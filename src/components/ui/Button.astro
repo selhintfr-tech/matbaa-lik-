@@ -1,0 +1,52 @@
+---
+interface Props {
+  variant?: "primary" | "secondary" | "pill" | "outline";
+  size?: "sm" | "md" | "lg";
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  class?: string;
+  id?: string;
+  target?: string;
+  rel?: string;
+  [key: string]: any;
+}
+
+const {
+  variant = "primary",
+  size = "md",
+  href,
+  type = "button",
+  class: className = "",
+  id,
+  target,
+  rel,
+  ...rest
+} = Astro.props;
+
+const baseStyles = "inline-flex items-center justify-center font-semibold transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 select-none text-center cursor-pointer";
+
+const variants = {
+  primary: "bg-[#0066FF] hover:bg-[#0052cc] text-white rounded-[10px] shadow-sm hover:shadow active:scale-[0.99]",
+  secondary: "bg-white hover:bg-[#f9f8f6] text-[#111111] border border-[#111111] rounded-[10px] active:scale-[0.99]",
+  pill: "bg-white hover:bg-[#FAF8F5] text-[#111111] border border-[#111111] rounded-full active:scale-[0.98]",
+  outline: "bg-transparent hover:bg-black/5 text-[#111111] border border-[#111111] rounded-[10px]",
+};
+
+const sizes = {
+  sm: "text-xs px-3 py-1.5 gap-1.5",
+  md: "text-sm px-4 py-2 gap-2",
+  lg: "text-base px-6 py-2.5 gap-2.5",
+};
+
+const combinedClasses = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`;
+---
+
+{href ? (
+  <a href={href} class={combinedClasses} id={id} target={target} rel={rel} {...rest}>
+    <slot />
+  </a>
+) : (
+  <button type={type} class={combinedClasses} id={id} {...rest}>
+    <slot />
+  </button>
+)}

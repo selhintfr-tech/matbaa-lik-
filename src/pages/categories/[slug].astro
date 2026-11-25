@@ -1,0 +1,110 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/ui/Icon.astro';
+import ProductCard from '../../components/product/ProductCard.astro';
+import CategoryDisplayAd from '../../components/promos/CategoryDisplayAd.astro';
+import { CATEGORIES, getCategoryBySlug, getProductsByCategory } from '../../data/catalog';
+import { siteConfig } from '../../data/site';
+
+export async function getStaticPaths() {
+  return CATEGORIES.map((cat) => ({
+    params: { slug: cat.id },
+    props: { category: cat },
+  }));
+}
+
+const { category } = Astro.props;
+const products = getProductsByCategory(category.id);
+const initialProducts = products.slice(0, 12);
+const remainingProducts = products.slice(12);
+---
+
+<BaseLayout
+  title={`${category.name} | Impression professionnelle au Maroc - MATBAA LIK`}
+  description={category.description}
+>
+  <div class="max-w-[1360px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <!-- Breadcrumb -->
+    <nav aria-label="Fil d'Ariane" class="mb-4 sm:mb-6 text-xs text-[#666666] flex items-center gap-1.5 flex-wrap">
+      <a href="/" class="hover:text-[#0066FF] transition-colors">Accueil</a>
+      <Icon name="ChevronRight" class="w-3.5 h-3.5 text-[#999999]" />
+      <span class="text-[#111111] font-semibold">{category.name}</span>
+    </nav>
+
+    <!-- Category Title & Products Header -->
+    <div class="mb-6 sm:mb-8">
+      <div class="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h1 class="text-xl sm:text-2xl md:text-3xl font-black text-[#111111] tracking-tight">
+            {category.name}
+          </h1>
+          <p class="text-xs sm:text-sm text-[#666666] mt-1 max-w-2xl">{category.description}</p>
+        </div>
+        <span class="text-xs font-semibold px-3 py-1.5 bg-white border border-[#DCD5C9] rounded-lg text-[#555555] shadow-2xs">
+          {products.length} produit{products.length > 1 ? 's' : ''} disponible{products.length > 1 ? 's' : ''}
+        </span>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="mb-12">
+
+      <!-- Initial grid: up to 12 products (4 cols desktop, 2-3 cols tablet, 2 cols mobile) -->
+      <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+        {initialProducts.map((product) => (
+          <ProductCard product={product} />
+        ))}
+      </div>
+
+      <!-- Small Promotional Ad — ONLY for Super Promos category, immediately below the product cards -->
+      {category.id === 'supers-promos' && (
+        <CategoryDisplayAd />
+      )}
+
+      <!-- Remaining products (if category has > 12 products) -->
+      {remainingProducts.length > 0 && (
+        <>
+          <div
+            id="category-remaining-products"
+            class="hidden grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 mt-3 sm:mt-4 md:mt-5"
+          >
+            {remainingProducts.map((product) => (
+              <ProductCard product={product} />
+            ))}
+          </div>
+
+          <div id="voir-tous-produits-container" class="mt-8 text-center">
+            <button
+              type="button"
+              id="btn-voir-tous-produits"
+              class="inline-flex items-center gap-2 py-3 px-6 sm:px-8 bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer"
+            >
+              <span>VOIR TOUS LES PRODUITS ({remainingProducts.length} supplémentaires)</span>
+              <Icon name="ChevronDown" class="w-4 h-4" />
+            </button>
+          </div>
+
+          <script>
+            function setupCategoryExpand() {
+              const btn = document.getElementById('btn-voir-tous-produits');
+              const remaining = document.getElementById('category-remaining-products');
+              const container = document.getElementById('voir-tous-produits-container');
+              if (btn && remaining && container) {
+                btn.addEventListener('click', () => {
+                  remaining.classList.remove('hidden');
+                  container.classList.add('hidden');
+                });
+              }
+            }
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', setupCategoryExpand);
+            } else {
+              setupCategoryExpand();
+            }
+            document.addEventListener('astro:page-load', setupCategoryExpand);
+          </script>
+        </>
+      )}
+    </div>
+  </div>
+</BaseLayout>

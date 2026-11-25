@@ -1,0 +1,120 @@
+---
+import Icon from '../ui/Icon.astro';
+import { siteConfig } from '../../data/site';
+---
+
+<footer class="w-full bg-[#E3DDD3] border-t border-[#D6D0C8] pt-10 pb-8 text-[#111111]" aria-label="Pied de page">
+  <div class="max-w-[1360px] mx-auto px-4 sm:px-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-8 pb-10 border-b border-[#D6D0C8]/70">
+      <!-- Col 1: Branding (4 cols) -->
+      <div class="lg:col-span-4 space-y-3">
+        <a href="/" class="inline-block group">
+          <img
+            src="/assets/logo-matbaa-lik-footer.svg"
+            alt="MATBAA LIK - Impression & Création au Maroc"
+            class="h-10 w-auto"
+            width="220"
+            height="54"
+          />
+        </a>
+        <p class="text-xs text-[#555555] leading-relaxed max-w-[300px]">
+          Votre partenaire d'impression en ligne et de création graphique professionnelle partout au Maroc.
+        </p>
+      </div>
+
+      <!-- Col 2: Contact (3 cols) -->
+      <div class="lg:col-span-3 space-y-2.5">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-[#111111]">
+          Contact
+        </h3>
+        <div class="space-y-2 text-xs text-[#555555]">
+          <div class="flex items-center gap-2">
+            <Icon name="MapPin" class="w-4 h-4 text-[#0066FF] flex-shrink-0" />
+            <span>{siteConfig.city}, {siteConfig.country}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <Icon name="Clock" class="w-4 h-4 text-[#0066FF] flex-shrink-0" />
+            <span>{siteConfig.workingHours}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 3: Liens rapides (3 cols) -->
+      <div class="lg:col-span-3 space-y-2.5">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-[#111111]">
+          Liens rapides
+        </h3>
+        <ul class="space-y-1.5 text-xs">
+          {siteConfig.navigation.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="text-[#555555] hover:text-[#0066FF] transition-colors"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Col 4: Suivez-nous (2 cols) -->
+      <div class="lg:col-span-2 space-y-2.5">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-[#111111]">
+          Suivez-nous
+        </h3>
+        <div class="flex items-center gap-3 pt-1">
+          <a
+            href={siteConfig.socials.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram MATBAA LIK"
+            class="w-8 h-8 rounded-full bg-white border border-[#D6D0C8] flex items-center justify-center text-[#111111] hover:text-[#0066FF] hover:border-[#0066FF] hover:bg-[#FAF8F5] transition-all"
+          >
+            <Icon name="Instagram" class="w-4 h-4" />
+          </a>
+
+          <a
+            href={siteConfig.socials.facebook}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook MATBAA LIK"
+            class="w-8 h-8 rounded-full bg-white border border-[#D6D0C8] flex items-center justify-center text-[#111111] hover:text-[#0066FF] hover:border-[#0066FF] hover:bg-[#FAF8F5] transition-all"
+          >
+            <Icon name="Facebook" class="w-4 h-4" />
+          </a>
+
+          <a
+            href={siteConfig.socials.whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="WhatsApp MATBAA LIK"
+            class="w-8 h-8 rounded-full bg-white border border-[#D6D0C8] flex items-center justify-center text-[#111111] hover:text-[#25D366] hover:border-[#25D366] hover:bg-[#FAF8F5] transition-all"
+          >
+            <Icon name="WhatsApp" class="w-4 h-4" />
+          </a>
+
+          <a
+            href={siteConfig.socials.tiktok}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="TikTok MATBAA LIK"
+            class="w-8 h-8 rounded-full bg-white border border-[#D6D0C8] flex items-center justify-center text-[#111111] hover:text-[#0066FF] hover:border-[#0066FF] hover:bg-[#FAF8F5] transition-all"
+          >
+            <Icon name="TikTok" class="w-3.5 h-3.5" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Copyright -->
+    <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[#666666]">
+      <p>© 2026 MATBAA LIK. Tous droits réservés.</p>
+      <div class="flex items-center gap-4">
+        <a href="/conditions" class="hover:text-[#111111] transition-colors">Mentions légales</a>
+        <span>•</span>
+        <a href="/conditions" class="hover:text-[#111111] transition-colors">Politique de confidentialité</a>
+      </div>
+    </div>
+  </div>
+</footer>

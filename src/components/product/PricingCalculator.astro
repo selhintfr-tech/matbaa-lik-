@@ -1,0 +1,419 @@
+---
+import Icon from '../ui/Icon.astro';
+import type { Product } from '../../data/catalog';
+import type { ProductPricing } from '../../data/pricing';
+import { formatPriceMAD } from '../../data/pricing';
+import { siteConfig } from '../../data/site';
+
+interface Props {
+  product: Product;
+  pricing: ProductPricing | null;
+}
+
+const { product, pricing } = Astro.props;
+
+// Determine initial options
+const formats = product.formats && product.formats.length > 0 ? product.formats : ["Standard"];
+const papers = product.papers && product.papers.length > 0 ? product.papers : ["Papier standard"];
+const finishes = product.finishes && product.finishes.length > 0 ? product.finishes : ["Standard"];
+const quantities = product.quantities && product.quantities.length > 0 ? product.quantities : ["Sur mesure"];
+
+const hasTiers = pricing && pricing.hasVerifiedPrices && pricing.tiers && pricing.tiers.length > 0;
+const initialTier = hasTiers ? pricing.tiers[0] : null;
+const initialPriceFormatted = formatPriceMAD(initialTier ? initialTier.priceHT : null);
+
+// Print options
+const printOptions = [
+  "Recto/Verso quadri (4/4)",
+  "Recto seul quadri (4/0)",
+  "Noir et blanc recto/verso",
+];
+
+// Turnaround options
+const turnaroundOptions = [
+  "Standard (3 à 5 jours)",
+  "Express (24h à 48h)",
+];
+
+const tiersJson = JSON.stringify(pricing?.tiers || []);
+---
+
+<!-- Pricing Calculator Card (Matching Image 1 AL PRINT exactly) -->
+<div
+  class="pricing-calculator-card bg-white rounded-xl border border-[#DCD5C9] shadow-xs p-5 sm:p-6 text-left relative"
+  id="pricing-calculator"
+  data-product-slug={product.slug}
+  data-product-title={product.title}
+  data-category-name={product.categoryName}
+  data-has-tiers={hasTiers ? "true" : "false"}
+  data-tiers={tiersJson}
+>
+  <!-- Card Header -->
+  <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-[#EAE5DC]">
+    <div class="flex items-center gap-2">
+      <Icon name="Sparkles" class="w-4 h-4 text-[#0066FF]" />
+      <h3 class="text-sm font-bold text-[#111111] uppercase tracking-wide">
+        Calculateur de prix en ligne
+      </h3>
+    </div>
+
+    {hasTiers ? (
+      <span class="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+        Tarif direct
+      </span>
+    ) : (
+      <span class="text-[11px] font-bold text-[#0066FF] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+        Sur devis sous 2h
+      </span>
+    )}
+  </div>
+
+  <!-- Form Controls: 2 Columns of compact Selectors -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+    <!-- 1. Quantité -->
+    <div>
+      <label for="calc-quantity" class="block text-[11px] font-bold uppercase tracking-wider text-[#555555] mb-1">
+        Quantité
+      </label>
+      <div class="relative">
+        <select
+          id="calc-quantity"
+          class="calc-select w-full appearance-none bg-[#FBF9F6] hover:bg-[#F4F1EA] focus:bg-white text-xs font-semibold text-[#111111] py-2 px-3 pr-7 rounded-lg border border-[#DCD5C9] focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF] transition-all cursor-pointer"
+        >
+          {quantities.map((q, idx) => (
+            <option value={q} selected={idx === 0}>{q}</option>
+          ))}
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#777777]">
+          <Icon name="ChevronDown" class="w-3.5 h-3.5" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Support / Papier -->
+    <div>
+      <label for="calc-paper" class="block text-[11px] font-bold uppercase tracking-wider text-[#555555] mb-1">
+        Support / Papier
+      </label>
+      <div class="relative">
+        <select
+          id="calc-paper"
+          class="calc-select w-full appearance-none bg-[#FBF9F6] hover:bg-[#F4F1EA] focus:bg-white text-xs font-semibold text-[#111111] py-2 px-3 pr-7 rounded-lg border border-[#DCD5C9] focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF] transition-all cursor-pointer"
+        >
+          {papers.map((p, idx) => (
+            <option value={p} selected={idx === 0}>{p}</option>
+          ))}
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#777777]">
+          <Icon name="ChevronDown" class="w-3.5 h-3.5" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Finition / Façonnage -->
+    <div>
+      <label for="calc-finish" class="block text-[11px] font-bold uppercase tracking-wider text-[#555555] mb-1">
+        Finition / Façonnage
+      </label>
+      <div class="relative">
+        <select
+          id="calc-finish"
+          class="calc-select w-full appearance-none bg-[#FBF9F6] hover:bg-[#F4F1EA] focus:bg-white text-xs font-semibold text-[#111111] py-2 px-3 pr-7 rounded-lg border border-[#DCD5C9] focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF] transition-all cursor-pointer"
+        >
+          {finishes.map((fn, idx) => (
+            <option value={fn} selected={idx === 0}>{fn}</option>
+          ))}
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#777777]">
+          <Icon name="ChevronDown" class="w-3.5 h-3.5" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Format -->
+    <div>
+      <label for="calc-format" class="block text-[11px] font-bold uppercase tracking-wider text-[#555555] mb-1">
+        Format
+      </label>
+      <div class="relative">
+        <select
+          id="calc-format"
+          class="calc-select w-full appearance-none bg-[#FBF9F6] hover:bg-[#F4F1EA] focus:bg-white text-xs font-semibold text-[#111111] py-2 px-3 pr-7 rounded-lg border border-[#DCD5C9] focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF] transition-all cursor-pointer"
+        >
+          {formats.map((f, idx) => (
+            <option value={f} selected={idx === 0}>{f}</option>
+          ))}
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#777777]">
+          <Icon name="ChevronDown" class="w-3.5 h-3.5" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Impression -->
+    <div>
+      <label for="calc-print" class="block text-[11px] font-bold uppercase tracking-wider text-[#555555] mb-1">
+        Impression
+      </label>
+      <div class="relative">
+        <select
+          id="calc-print"
+          class="calc-select w-full appearance-none bg-[#FBF9F6] hover:bg-[#F4F1EA] focus:bg-white text-xs font-semibold text-[#111111] py-2 px-3 pr-7 rounded-lg border border-[#DCD5C9] focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF] transition-all cursor-pointer"
+        >
+          {printOptions.map((opt, idx) => (
+            <option value={opt} selected={idx === 0}>{opt}</option>
+          ))}
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#777777]">
+          <Icon name="ChevronDown" class="w-3.5 h-3.5" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Délai de production -->
+    <div>
+      <label for="calc-turnaround" class="block text-[11px] font-bold uppercase tracking-wider text-[#555555] mb-1">
+        Délai de fabrication
+      </label>
+      <div class="relative">
+        <select
+          id="calc-turnaround"
+          class="calc-select w-full appearance-none bg-[#FBF9F6] hover:bg-[#F4F1EA] focus:bg-white text-xs font-semibold text-[#111111] py-2 px-3 pr-7 rounded-lg border border-[#DCD5C9] focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF] transition-all cursor-pointer"
+        >
+          {turnaroundOptions.map((t, idx) => (
+            <option value={t} selected={idx === 0}>{t}</option>
+          ))}
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#777777]">
+          <Icon name="ChevronDown" class="w-3.5 h-3.5" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Price Output Box (Matching AL PRINT Total Layout) -->
+  <div class="pt-3 pb-3.5 px-3.5 rounded-lg bg-[#FAF8F5] border border-[#E8E2D8] mb-4">
+    <div class="flex items-baseline justify-between">
+      <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#555555]">
+        TOTAL ESTIMÉ
+      </span>
+      <div class="text-right">
+        <div
+          id="calc-price-ht"
+          class="text-2xl sm:text-3xl font-black text-[#0066FF] tracking-tight leading-none"
+        >
+          {initialPriceFormatted.ht}
+        </div>
+        <div
+          id="calc-price-ttc"
+          class="text-xs font-semibold text-[#555555] mt-1"
+        >
+          {initialPriceFormatted.rawHT ? initialPriceFormatted.ttc : "Devis gratuit immédiat"}
+        </div>
+      </div>
+    </div>
+
+    <div id="calc-unit-price" class="text-[11px] text-[#777777] mt-1 text-right hidden">
+      <!-- Injected by JS -->
+    </div>
+
+    <p class="text-[10px] text-[#888888] leading-tight pt-2.5 mt-2 border-t border-[#EAE5DC]">
+      * <strong>Tarif indicatif de référence marché marocain</strong> (Source 24hprint.ma au 24/11/2026), soumis à validation préalable MATBAA LIK. Contrôle PAO gratuit inclus.
+    </p>
+  </div>
+
+  <!-- Action CTAs (Image 1 AL PRINT Match: Red Upload + Yellow Order + WhatsApp link) -->
+  <div class="space-y-2.5">
+    <!-- 1. Red Upload Button -->
+    <div class="relative">
+      <input
+        type="file"
+        id="calc-file-upload-input"
+        class="hidden"
+        accept=".pdf,.ai,.eps,.psd,.jpg,.jpeg,.png,.tiff,.zip"
+      />
+      <button
+        type="button"
+        id="calc-upload-btn"
+        class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-[#E53935] hover:bg-[#D32F2F] text-white text-xs sm:text-sm font-bold uppercase tracking-wider shadow-xs transition-all cursor-pointer active:scale-[0.99]"
+      >
+        <Icon name="UploadCloud" class="w-4 h-4 text-white" />
+        <span id="calc-upload-text">Transférer votre fichier (Max 100 Mo)</span>
+      </button>
+      <div id="calc-file-status" class="hidden text-[11px] text-emerald-800 bg-emerald-50 py-1.5 px-3 rounded-md border border-emerald-200 mt-1.5 text-center font-semibold">
+        <!-- Injected on file select -->
+      </div>
+    </div>
+
+    <!-- 2. Yellow Order Button -->
+    <a
+      id="calc-cta-quote"
+      href={`/devis?produit=${encodeURIComponent(product.title)}&categorie=${encodeURIComponent(product.categoryName)}`}
+      class="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-lg bg-[#FFB703] hover:bg-[#F59E0B] text-[#111111] text-xs sm:text-sm font-black uppercase tracking-wider shadow-xs transition-all text-center active:scale-[0.99]"
+    >
+      <Icon name="Truck" class="w-4 h-4 text-[#111111]" />
+      <span>COMMANDER / VALIDER CE DEVIS</span>
+    </a>
+
+    <!-- 3. WhatsApp Secondary Action -->
+    <a
+      id="calc-cta-whatsapp"
+      href={`https://wa.me/212660000000?text=${encodeURIComponent(`Bonjour MATBAA LIK, je souhaite commander / devis pour : ${product.title}`)}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-bold text-[#25D366] hover:text-[#1ea851] transition-colors text-center"
+    >
+      <Icon name="WhatsApp" class="w-3.5 h-3.5 fill-current" />
+      <span>Demander confirmation via WhatsApp →</span>
+    </a>
+  </div>
+</div>
+
+<script>
+  function initPricingCalculator() {
+    const card = document.getElementById('pricing-calculator');
+    if (!card) return;
+
+    const productTitle = card.getAttribute('data-product-title') || '';
+    const categoryName = card.getAttribute('data-category-name') || '';
+    const tiersData = JSON.parse(card.getAttribute('data-tiers') || '[]');
+
+    const selectQuantity = document.getElementById('calc-quantity') as HTMLSelectElement | null;
+    const selectFormat = document.getElementById('calc-format') as HTMLSelectElement | null;
+    const selectPaper = document.getElementById('calc-paper') as HTMLSelectElement | null;
+    const selectFinish = document.getElementById('calc-finish') as HTMLSelectElement | null;
+    const selectPrint = document.getElementById('calc-print') as HTMLSelectElement | null;
+    const selectTurnaround = document.getElementById('calc-turnaround') as HTMLSelectElement | null;
+
+    const priceHTElem = document.getElementById('calc-price-ht');
+    const priceTTCElem = document.getElementById('calc-price-ttc');
+    const unitPriceElem = document.getElementById('calc-unit-price');
+    const ctaQuote = document.getElementById('calc-cta-quote') as HTMLAnchorElement | null;
+    const ctaWhatsApp = document.getElementById('calc-cta-whatsapp') as HTMLAnchorElement | null;
+
+    const fileUploadInput = document.getElementById('calc-file-upload-input') as HTMLInputElement | null;
+    const uploadBtn = document.getElementById('calc-upload-btn');
+    const uploadText = document.getElementById('calc-upload-text');
+    const fileStatus = document.getElementById('calc-file-status');
+
+    function updateCalculations() {
+      const qVal = selectQuantity?.value || '';
+      const fVal = selectFormat?.value || '';
+      const pVal = selectPaper?.value || '';
+      const fnVal = selectFinish?.value || '';
+      const prVal = selectPrint?.value || '';
+      const tVal = selectTurnaround?.value || '';
+
+      // Match tier
+      let matched = null;
+      if (tiersData && tiersData.length > 0) {
+        // 1. Exact match on quantity and format
+        matched = tiersData.find((t: any) => t.quantity === qVal && t.format === fVal);
+        // 2. Match on quantity
+        if (!matched) {
+          matched = tiersData.find((t: any) => t.quantity === qVal);
+        }
+        // 3. Fallback to format
+        if (!matched) {
+          matched = tiersData.find((t: any) => t.format === fVal);
+        }
+      }
+
+      let priceTextHT = 'Prix sur devis';
+      let priceTextTTC = 'Sur devis sous 2h';
+      let unitPriceText = '';
+      let priceForLink = 'Prix sur devis';
+
+      if (matched && matched.priceHT && matched.priceHT > 0) {
+        const ht = matched.priceHT;
+        const ttc = ht * 1.20;
+        priceTextHT = ht.toLocaleString('fr-MA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' DH HT';
+        priceTextTTC = ttc.toLocaleString('fr-MA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' DH TTC';
+        priceForLink = priceTextHT;
+
+        // Extract numeric quantity
+        const numMatch = qVal.replace(/\s/g, '').match(/\d+/);
+        if (numMatch) {
+          const num = parseInt(numMatch[0], 10);
+          if (num > 0) {
+            const unit = ht / num;
+            unitPriceText = `Soit ${unit.toLocaleString('fr-MA', { minimumFractionDigits: 2, maximumFractionDigits: 3 })} DH / unité HT`;
+          }
+        }
+      }
+
+      if (priceHTElem) priceHTElem.textContent = priceTextHT;
+      if (priceTTCElem) priceTTCElem.textContent = priceTextTTC;
+
+      if (unitPriceElem) {
+        if (unitPriceText) {
+          unitPriceElem.textContent = unitPriceText;
+          unitPriceElem.classList.remove('hidden');
+        } else {
+          unitPriceElem.classList.add('hidden');
+        }
+      }
+
+      // Update CTA Quote Link
+      if (ctaQuote) {
+        const params = new URLSearchParams({
+          produit: productTitle,
+          categorie: categoryName,
+          quantite: qVal,
+          format: fVal,
+          papier: pVal,
+          finition: fnVal,
+          impression: prVal,
+          delai: tVal,
+          prix_estime: priceForLink,
+        });
+        ctaQuote.href = `/devis?${params.toString()}`;
+      }
+
+      // Update CTA WhatsApp Link
+      if (ctaWhatsApp) {
+        const waMsg = `Bonjour MATBAA LIK, je souhaite commander / devis pour :\n` +
+          `• Produit : ${productTitle}\n` +
+          `• Quantité : ${qVal}\n` +
+          `• Format : ${fVal}\n` +
+          `• Papier : ${pVal}\n` +
+          `• Finition : ${fnVal}\n` +
+          `• Impression : ${prVal}\n` +
+          `• Délai : ${tVal}\n` +
+          `• Estimation : ${priceForLink}\n\n` +
+          `Merci de me confirmer la faisabilité et les délais.`;
+        ctaWhatsApp.href = `https://wa.me/212660000000?text=${encodeURIComponent(waMsg)}`;
+      }
+    }
+
+    // Attach listeners
+    [selectQuantity, selectFormat, selectPaper, selectFinish, selectPrint, selectTurnaround].forEach((sel) => {
+      sel?.addEventListener('change', updateCalculations);
+    });
+
+    // File upload handler
+    if (uploadBtn && fileUploadInput) {
+      uploadBtn.addEventListener('click', () => {
+        fileUploadInput.click();
+      });
+
+      fileUploadInput.addEventListener('change', () => {
+        if (fileUploadInput.files && fileUploadInput.files.length > 0) {
+          const file = fileUploadInput.files[0];
+          const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+          if (uploadText) uploadText.textContent = `Fichier joint : ${file.name} (${sizeMB} Mo)`;
+          if (fileStatus) {
+            fileStatus.textContent = `✓ Fichier « ${file.name} » (${sizeMB} Mo) prêt pour transmission.`;
+            fileStatus.classList.remove('hidden');
+          }
+        }
+      });
+    }
+
+    // Initial run
+    updateCalculations();
+  }
+
+  initPricingCalculator();
+  document.addEventListener('astro:page-load', initPricingCalculator);
+</script>

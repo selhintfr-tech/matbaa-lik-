@@ -1,0 +1,18 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import CategoryCard from './CategoryCard.astro';
+import { categories } from '../../data/categories';
+---
+
+<section id="categories" class="w-full py-6 sm:py-8" aria-label="Nos catégories d'impression">
+  <div class="max-w-[1360px] mx-auto px-4 sm:px-6">
+    <SectionHeading title="NOS CATÉGORIES D'IMPRESSION" />
+
+    <!-- 4 columns on desktop, 2 columns on mobile/tablet -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+      {categories.map((category) => (
+        <CategoryCard category={category} />
+      ))}
+    </div>
+  </div>
+</section>

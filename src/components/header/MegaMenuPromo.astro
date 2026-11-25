@@ -1,0 +1,157 @@
+---
+import { getPromoBannersForCategory, type PromoBanner } from '../../data/promos';
+
+interface Props {
+  categoryId: string;
+}
+
+const { categoryId } = Astro.props;
+const banners: PromoBanner[] = getPromoBannersForCategory(categoryId);
+const hasMultiple = banners.length > 1;
+const primaryBanner = banners[0];
+const customAspect = primaryBanner?.aspectRatio;
+const isFrameless = primaryBanner?.frameless || categoryId === 'flyers-depliants';
+---
+
+{banners.length > 0 && (
+  <aside
+    class="mega-menu-promo-container hidden md:flex w-[300px] xl:w-[320px] 2xl:w-[340px] flex-shrink-0 flex-col items-center justify-center self-stretch pl-4 sm:pl-6 border-l border-[#EFEBE4]"
+    aria-label="Sélection mise en avant"
+  >
+    <div
+      class={`relative w-full ${customAspect ? '' : 'aspect-square'} max-w-[300px] xl:max-w-[320px] 2xl:max-w-[340px] ${
+        isFrameless
+          ? 'flex items-center justify-center'
+          : 'rounded-2xl overflow-hidden border border-[#EAE5DC] bg-white shadow-2xs'
+      } group/promo transition-all duration-300`}
+      style={customAspect ? `aspect-ratio: ${customAspect};` : undefined}
+      data-promo-carousel={hasMultiple ? "true" : undefined}
+    >
+      {banners.map((banner, idx) => (
+        <a
+          href={banner.link}
+          class={`promo-slide absolute inset-0 w-full h-full flex items-center justify-center transition-opacity duration-700 ease-in-out ${
+            idx === 0 ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+          }`}
+          data-slide-index={idx}
+          aria-label={banner.alt || "Promotion"}
+        >
+          <!-- Clean Product Image (No blur, no dark gradient, no overlays, uncropped) -->
+          <img
+            src={banner.image}
+            alt={banner.alt}
+            class="w-full h-full object-contain object-center select-none group-hover/promo:scale-[1.02] transition-transform duration-300"
+            loading="lazy"
+          />
+
+          <!-- Optional badge/title only if explicitly configured -->
+          {(banner.badge || banner.title) && (
+            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 z-10 text-white space-y-1">
+              {banner.badge && (
+                <span class="inline-block text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#0066FF] text-white shadow-2xs">
+                  {banner.badge}
+                </span>
+              )}
+              {banner.title && (
+                <h4 class="text-xs sm:text-[13px] font-extrabold leading-snug drop-shadow-sm text-white line-clamp-2">
+                  {banner.title}
+                </h4>
+              )}
+            </div>
+          )}
+        </a>
+      ))}
+
+      <!-- Subtle pagination indicator for multiple banners -->
+      {hasMultiple && (
+        <div class="absolute top-2.5 right-2.5 z-20 flex items-center gap-1 bg-black/40 backdrop-blur-xs px-1.5 py-0.5 rounded-full pointer-events-none">
+          {banners.map((_, idx) => (
+            <span
+              class={`promo-dot w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                idx === 0 ? "bg-white scale-125" : "bg-white/50"
+              }`}
+              data-dot-index={idx}
+            ></span>
+          ))}
+        </div>
+      )}
+    </div>
+  </aside>
+)}
+
+<script>
+  function initMegaMenuPromos() {
+    const carousels = document.querySelectorAll<HTMLElement>('[data-promo-carousel="true"]');
+    carousels.forEach((carousel) => {
+      const slides = carousel.querySelectorAll<HTMLElement>('.promo-slide');
+      const dots = carousel.querySelectorAll<HTMLElement>('.promo-dot');
+      if (slides.length < 2) return;
+
+      let currentIndex = 0;
+      let timer: number | undefined;
+
+      function showSlide(index: number) {
+        slides.forEach((slide, idx) => {
+          if (idx === index) {
+            slide.classList.remove('opacity-0', 'pointer-events-none', 'z-0');
+            slide.classList.add('opacity-100', 'z-10');
+          } else {
+            slide.classList.remove('opacity-100', 'z-10');
+            slide.classList.add('opacity-0', 'pointer-events-none', 'z-0');
+          }
+        });
+        dots.forEach((dot, idx) => {
+          if (idx === index) {
+            dot.classList.add('bg-white', 'scale-125');
+            dot.classList.remove('bg-white/50');
+          } else {
+            dot.classList.remove('bg-white', 'scale-125');
+            dot.classList.add('bg-white/50');
+          }
+        });
+        currentIndex = index;
+      }
+
+      function nextSlide() {
+        const nextIndex = (currentIndex + 1) % slides.length;
+        showSlide(nextIndex);
+      }
+
+      function startTimer() {
+        stopTimer();
+        timer = window.setInterval(nextSlide, 5000);
+      }
+
+      function stopTimer() {
+        if (timer) {
+          clearInterval(timer);
+          timer = undefined;
+        }
+      }
+
+      // Check if dropdown panel is visible
+      const parentPanel = carousel.closest('.mega-menu-panel');
+      if (parentPanel) {
+        const observer = new MutationObserver(() => {
+          const isHidden = parentPanel.classList.contains('hidden');
+          if (isHidden) {
+            stopTimer();
+          } else {
+            startTimer();
+          }
+        });
+        observer.observe(parentPanel, { attributes: true, attributeFilter: ['class'] });
+      }
+
+      carousel.addEventListener('mouseenter', stopTimer);
+      carousel.addEventListener('mouseleave', () => {
+        if (parentPanel && !parentPanel.classList.contains('hidden')) {
+          startTimer();
+        }
+      });
+    });
+  }
+
+  initMegaMenuPromos();
+  document.addEventListener('astro:page-load', initMegaMenuPromos);
+</script>

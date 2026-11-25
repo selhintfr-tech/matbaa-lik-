@@ -1,0 +1,21 @@
+---
+// VideoShowcase.astro — Full-Bleed Edge-to-Edge Cinematic Video Showcase
+---
+
+<section class="relative w-full overflow-hidden py-4 sm:py-6" aria-label="Présentation vidéo MATBAA LIK">
+  <!-- Edge-to-edge 100% full viewport width with zero horizontal padding or margins -->
+  <div class="w-full relative aspect-[1920/640] bg-[#111111] overflow-hidden" style="aspect-ratio: 1920 / 640;">
+    <video
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      poster="/videos/carnets-de-factures-poster.webp"
+      class="w-full h-full object-cover block select-none pointer-events-none"
+    >
+      <source src="/videos/carnets-de-factures.mp4" type="video/mp4" />
+      Votre navigateur ne prend pas en charge la lecture de vidéos HTML5.
+    </video>
+  </div>
+</section>

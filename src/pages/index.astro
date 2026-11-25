@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroCarousel from '../components/home/HeroCarousel.astro';
+import FeaturedOffers from '../components/home/FeaturedOffers.astro';
+import VideoShowcase from '../components/home/VideoShowcase.astro';
+import PortfolioSection from '../components/home/PortfolioSection.astro';
+import HowItWorks from '../components/home/HowItWorks.astro';
+import QuoteBanner from '../components/home/QuoteBanner.astro';
+---
+
+<BaseLayout>
+  <!-- 1. Large split hero carousel -->
+  <HeroCarousel />
+
+  <!-- 2. OFFRES DU MOMENT — 8 featured product offers -->
+  <FeaturedOffers />
+
+  <!-- 3. Showcase Vidéo Produit (directly below Offres du moment) -->
+  <VideoShowcase />
+
+  <!-- 4. NOS RÉALISATIONS (auto-scroll carousel directly below video) -->
+  <PortfolioSection />
+
+  <!-- 5. COMMENT ÇA MARCHE ? — 3 process cards -->
+  <HowItWorks />
+
+  <!-- 6. Black quotation CTA banner -->
+  <QuoteBanner />
+</BaseLayout>

@@ -1,0 +1,239 @@
+---
+import Icon from '../ui/Icon.astro';
+
+const slides = [
+  {
+    id: 1,
+    image: "/assets/hero-main-hd.png",
+    alt: "Impression et packaging professionnel - MATBAA LIK",
+    bgColor: "bg-[#E5DCD0]",
+    isDark: false,
+    headline: "Tous vos besoins<br />d'impression,<br />un seul partenaire.",
+    subtext: "Impression professionnelle et supports personnalisés pour entreprises et particuliers au Maroc. Pas de fichier\u00A0? Notre studio crée votre design.",
+  },
+  {
+    id: 2,
+    image: "/assets/hero-slide-2-hd.png",
+    alt: "Cartes, flyers et brochures de qualité - MATBAA LIK",
+    bgColor: "bg-[#F4F1EA]",
+    isDark: false,
+    headline: "Cartes, flyers et<br />brochures à la hauteur<br />de votre <span style=\"color: #E86100;\">marque.</span>",
+    subtext: "Des finitions soignées, des couleurs fidèles et une livraison rapide partout au Maroc pour tous vos supports papier.",
+  },
+  {
+    id: 3,
+    image: "/assets/hero-slide-3-hd.png",
+    alt: "Impression offset haute précision - MATBAA LIK",
+    bgColor: "bg-[#0B1016]",
+    isDark: true,
+    headline: "La puissance de<br />l'impression<br /><span style=\"color: #FF7A20;\">professionnelle.</span>",
+    subtext: "Des équipements modernes pour des tirages impeccables, en petite ou grande quantité.",
+  },
+];
+---
+
+<!-- Full-Width Edge-to-Edge Hero Section (100vw, Zero Side Gaps) -->
+<section class="relative w-full overflow-hidden" aria-label="Présentation MATBAA LIK">
+  <div
+    id="hero-carousel"
+    class="relative w-full overflow-hidden min-h-[460px] md:h-[520px] lg:h-[580px] xl:h-[620px] flex items-center bg-[#E5DCD0]"
+    data-autoplay="5000"
+  >
+    <!-- Slides Container -->
+    {slides.map((slide, idx) => (
+      <div
+        class={`carousel-slide absolute inset-0 w-full h-full flex items-center transition-opacity duration-700 ease-in-out ${slide.bgColor} ${idx === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}
+        data-slide-index={idx}
+        aria-hidden={idx === 0 ? "false" : "true"}
+      >
+        <!-- Background Image: 100% full height, uncropped, right-aligned to screen edge with soft left-edge mask -->
+        <div class="absolute inset-0 w-full h-full flex justify-end overflow-hidden pointer-events-none">
+          <img
+            src={slide.image}
+            alt={slide.alt}
+            class="h-full w-auto max-w-none object-contain object-right ml-auto select-none [mask-image:linear-gradient(to_right,transparent,black_12%)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_12%)]"
+            loading={idx === 0 ? "eager" : "lazy"}
+            decoding={idx === 0 ? "sync" : "async"}
+          />
+        </div>
+
+        <!-- Mobile/Narrow screen gradient to guarantee 100% text legibility -->
+        <div
+          class="absolute inset-0 bg-gradient-to-r from-inherit via-inherit/90 to-transparent sm:hidden pointer-events-none z-10"
+          aria-hidden="true"
+        ></div>
+
+        <!-- Left Overlay Content: Centered aligned with site container grid -->
+        <div class="relative z-20 w-full max-w-[1440px] mx-auto px-6 sm:px-10 md:px-12 lg:px-14 flex items-center">
+          <div class="w-full max-w-[560px]">
+            <h1
+              class={`text-3xl sm:text-4xl lg:text-[42px] xl:text-[46px] font-black leading-[1.08] tracking-tight mb-4 drop-shadow-sm ${slide.isDark ? 'text-white' : 'text-[#111111]'}`}
+              set:html={slide.headline}
+            />
+
+            <p class={`text-xs sm:text-sm font-medium leading-relaxed mb-6 sm:mb-8 max-w-[450px] ${slide.isDark ? 'text-gray-200' : 'text-[#333333]'}`}>
+              {slide.subtext}
+            </p>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center gap-3">
+              <a
+                href="#categories"
+                class="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-sm font-bold rounded-[10px] shadow-sm hover:shadow transition-all active:scale-[0.98]"
+              >
+                <span>Voir les produits</span>
+                <Icon name="ArrowRight" class="w-4 h-4" />
+              </a>
+
+              <a
+                href="/devis"
+                class={`inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold rounded-[10px] shadow-sm hover:shadow transition-all active:scale-[0.98] ${
+                  slide.isDark
+                    ? 'border border-white/80 text-white bg-transparent hover:bg-white/10'
+                    : 'bg-white hover:bg-[#FAF8F5] text-[#111111] border border-[#111111]'
+                }`}
+              >
+                <span>Demander un devis</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
+
+    <!-- Centered Bottom Pagination Dots (Exactly 3 Dots, Active Orange #F26522) -->
+    <div
+      class="absolute bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 z-30"
+      role="tablist"
+      aria-label="Sélection des diapositives"
+    >
+      {slides.map((_, idx) => (
+        <button
+          type="button"
+          role="tab"
+          class="carousel-dot h-2.5 rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 shadow-sm cursor-pointer"
+          style={idx === 0 ? "width: 24px; background-color: #F26522;" : "width: 10px; background-color: #FFFFFF; border: 1px solid rgba(0,0,0,0.15);"}
+          aria-label={`Afficher diapositive ${idx + 1}`}
+          aria-selected={idx === 0 ? "true" : "false"}
+          data-dot-index={idx}
+        ></button>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  function initHeroCarousel() {
+    const carousel = document.getElementById("hero-carousel");
+    if (!carousel) return;
+
+    const slides = carousel.querySelectorAll<HTMLElement>(".carousel-slide");
+    const dots = carousel.querySelectorAll<HTMLButtonElement>(".carousel-dot");
+    const totalSlides = slides.length;
+    if (totalSlides < 2) return;
+
+    let currentIndex = 0;
+    let autoplayTimer: number | undefined;
+    const intervalTime = parseInt(carousel.getAttribute("data-autoplay") || "5000", 10);
+
+    function goToSlide(index: number) {
+      if (index === currentIndex) return;
+
+      slides.forEach((slide, idx) => {
+        if (idx === index) {
+          slide.classList.remove("opacity-0", "pointer-events-none", "z-0");
+          slide.classList.add("opacity-100", "z-10");
+          slide.setAttribute("aria-hidden", "false");
+        } else {
+          slide.classList.remove("opacity-100", "z-10");
+          slide.classList.add("opacity-0", "pointer-events-none", "z-0");
+          slide.setAttribute("aria-hidden", "true");
+        }
+      });
+
+      dots.forEach((dot, idx) => {
+        if (idx === index) {
+          dot.style.width = "24px";
+          dot.style.backgroundColor = "#F26522";
+          dot.style.borderColor = "transparent";
+          dot.setAttribute("aria-selected", "true");
+        } else {
+          dot.style.width = "10px";
+          dot.style.backgroundColor = "#FFFFFF";
+          dot.style.borderColor = "rgba(0,0,0,0.15)";
+          dot.setAttribute("aria-selected", "false");
+        }
+      });
+
+      currentIndex = index;
+    }
+
+    function nextSlide() {
+      const next = (currentIndex + 1) % totalSlides;
+      goToSlide(next);
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+      autoplayTimer = window.setInterval(nextSlide, intervalTime);
+    }
+
+    function stopAutoplay() {
+      if (autoplayTimer !== undefined) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = undefined;
+      }
+    }
+
+    // Connect dots
+    dots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        const targetIndex = parseInt(dot.getAttribute("data-dot-index") || "0", 10);
+        goToSlide(targetIndex);
+        startAutoplay();
+      });
+    });
+
+    // Touch Swipe support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    carousel.addEventListener(
+      "touchstart",
+      (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        stopAutoplay();
+      },
+      { passive: true }
+    );
+
+    carousel.addEventListener(
+      "touchend",
+      (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diffX = touchEndX - touchStartX;
+        if (Math.abs(diffX) > 40) {
+          if (diffX < 0) {
+            nextSlide();
+          } else {
+            const prev = (currentIndex - 1 + totalSlides) % totalSlides;
+            goToSlide(prev);
+          }
+        }
+        startAutoplay();
+      },
+      { passive: true }
+    );
+
+    // Pause on hover
+    carousel.addEventListener("mouseenter", stopAutoplay);
+    carousel.addEventListener("mouseleave", startAutoplay);
+
+    // Start autoplay initially
+    startAutoplay();
+  }
+
+  // Run on initial load and view transitions
+  initHeroCarousel();
+  document.addEventListener("astro:page-load", initHeroCarousel);
+</script>

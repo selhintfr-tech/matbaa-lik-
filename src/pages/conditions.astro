@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../data/site';
+---
+
+<BaseLayout
+  title="Conditions Générales & Mentions Légales | MATBAA LIK"
+  description="Conditions générales d'utilisation, mentions légales et politique de confidentialité de MATBAA LIK."
+>
+  <div class="max-w-[900px] mx-auto px-4 sm:px-6 py-10 sm:py-16">
+    <div class="w-8 h-[4px] bg-[#F26522] rounded-full mb-3"></div>
+    <h1 class="text-2xl sm:text-3xl font-black uppercase text-[#111111] tracking-tight mb-6">
+      Conditions Générales & Mentions Légales
+    </h1>
+
+    <div class="bg-white rounded-2xl p-6 sm:p-10 border border-[#DCD6CC] shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-6 text-xs sm:text-sm text-[#444444] leading-relaxed">
+      <section>
+        <h2 class="text-base font-bold text-[#111111] mb-2">1. Présentation de la plateforme</h2>
+        <p>
+          MATBAA LIK est une plateforme marocaine spécialisée dans les services d'impression numérique, offset et grand format, ainsi que la création graphique professionnelle, basée à {siteConfig.city}, Maroc.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-base font-bold text-[#111111] mb-2">2. Validation du Bon à Tirer (BAT)</h2>
+        <p>
+          Avant tout lancement d'impression, un Bon à Tirer numérique (BAT) est soumis au client par voie électronique (WhatsApp ou email). La validation expresse du BAT dégage MATBAA LIK de toute responsabilité quant aux erreurs orthographiques, typographiques ou de mise en page préalablement validées par le donneur d'ordre.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-base font-bold text-[#111111] mb-2">3. Livraison partout au Maroc</h2>
+        <p>
+          MATBAA LIK assure l'expédition et la livraison des commandes imprimées vers l'ensemble des villes du Royaume du Maroc par le biais de transporteurs partenaires agréés.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-base font-bold text-[#111111] mb-2">4. Protection des données personnelles</h2>
+        <p>
+          Les données transmises lors d'une demande de devis ou de commande sont exclusivement réservées au traitement de ladite prestation par MATBAA LIK et ne sont cédées à aucun tiers.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
